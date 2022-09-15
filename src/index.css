@@ -1,13 +1,169 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Roboto' !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: "#000";
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+button.MuiButton-root {
+  background-color: #e2e2e2;
+  border-radius: 50px ;
+  color: #4E0F1E;
+  transition: .2s linear;
+}
+button.MuiButton-root:hover {
+  background-color: #4E0F1E;
+  color: #e2e2e2;
+  transition: .2s linear;
+}
+
+.fundo-background {
+  width: 100vw;
+  height: 100vh;
+  min-width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background: url(assets/fundologin.png);
+  background-size:cover;
+  background-color: #4E0F1E ;
+  background-repeat: repeat;
+  color: #fff;
+}
+.caixa-login {
+  background-color: #2403054d;
+  backdrop-filter: blur(1px) !important;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px;
+}
+
+.caixa-login a{
+  text-decoration: none;
+  color: #989898;
+}
+
+.caixa-login .botao-login {
+background-color: #e1a409;
+}
+
+.caixa-login .botao-login:hover {
+  background-color: #d69b05;
+}
+
+.icon-side-logo {
+  width: 150px;
+  background-color: #fff !important;
+  border-radius: 50%;
+  }
+  .inputLogin input {
+    color: #e1a409;
+    font-size: 12px;
+  }
+
+.ui-container {
+  margin-top: 64px;
+  padding: 0px 75px !important;
+}
+
+.ui-linha-superior-grid {
+  padding:35px;
+  
+}
+.ui-linha-superior-grid .logo-linha-superior-grid{
+  width: 150px;  
+  float: left;
+  vertical-align: middle;
+}
+
+.grid-usuario .MuiPaper-root > div{
+  background-color: #4E0F1E;
+  color: #fff;
+}
+
+.nome-imobiliaria{
+  color: #4E0F1E;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+.linha-dados {
+  padding: 1px 0px;
+  color: #414141;
+  font-size: 13px;
+}
+.linha-dados .dados-imobiliaria{
+  font-weight: 500;
+  margin-right: 5px;
+}
+.card-grid-white {
+  background-color: #fff;
+  transition: .3s ease-in-out;
+}
+.card-grid-white:hover {
+  background-color: #f2f2f2;
+  transition: .3s ease-in-out;
+}
+.dialog-container {
+   width: 90vw !important; 
+   margin: 5vw !important;
+}
+
+.icon-form-default {
+  vertical-align: middle !important;
+  margin: 5px 10px !important;
+  background: #666666 !important;
+  color: #fff !important;
+  padding: 10px !important;
+  border-radius: 5px !important;
+  font-size: 16px !important;
+}
+
+.MuiDialog-paper {
+  border-radius: 5px !important;
+}
+.MuiDialogTitle-root, .MuiDialogActions-root{
+  background: #f0f0f0;
+  color: #666666;
+  font-size: 16px;
+  font-family: 'Roboto';
+}
+
+.MuiTypography-h6 {
+  font-size: 14px !important;
+}
+/* Demonstração de uma barra de rolagem personalizada
+  * (não será visível ao menos que a largura/altura seja especificada) */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 8px;
+    background-color: #c2c2c2; /* ou que isso seja adicionado ao "caminho" da barra */
+  }
+  
+  /* Adiciona a barra arrastável */
+  ::-webkit-scrollbar-thumb {
+      background: #666666;
+  }
+
+@media (max-width: 900px) {
+  .dialog-container {
+    width: 100vw !important; 
+    margin: 0 !important;
+ }
+ .MuiDialog-paper {
+  border-radius: 0px !important;
+}
+}
+.dz-image {
+  border: 1px solid #666;
+  padding: 0px !important;
+  border-radius: 10px;
+  width: 100%; 
+}
+.dz-image p {
+ text-align: center;
 }

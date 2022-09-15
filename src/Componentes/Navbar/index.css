@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+
+@font-face {
+    font-family: 'Butler';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Butler'), url('../fonts/Butler.otf') format('opentype');
+  }
+
+.sidebar {
+    background-color: #4E0F1E !important;
+    color: #fff !important;
+    border-bottom: 7px solid !important;
+    border-image: linear-gradient(to right, #ca9611, #f1af09, #c9930a) 1 !important;
+    vertical-align: middle !important;
+}
+.sidebar .titulo-sidebar {
+    font-family: 'Butler';
+    font-size: 18px;
+    letter-spacing:2px
+    
+}
+.navbar .logo{
+    width: 100px;
+}
+.button-nav {
+    background-color: inherit !important;
+    padding: 10px !important;
+    text-decoration: none !important;
+    color: #fff;
+}
+
+.link-sidebar {
+    text-decoration: none;
+    color: #000;
+    font-size: 12px;
+}
+.link-sidebar .link-icon {
+    color: #c9930a !important;
+    font-size:18px;
+}
+.header-sidebar {
+    text-align: center;
+    margin-top: 10px !important;
+}
+.header-sidebar .header-avatar{
+    text-align: center;
+    height:100px;
+    width: auto;
+}
+.header-sidebar .header-avatar img{
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
+    border: 1px solid #4E0F1E;
+}
+.header-sidebar .header-name{
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: #1d1d1d;
+    padding: 10px !important;
+}
+.divider-header {
+    border-bottom: 3px solid !important;
+    border-image: linear-gradient(to right, #ca9611, #f1af09, #c9930a) 1 !important;
+}
