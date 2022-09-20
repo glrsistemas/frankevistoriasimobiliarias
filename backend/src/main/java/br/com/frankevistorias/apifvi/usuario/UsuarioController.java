@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -30,34 +31,37 @@ public class UsuarioController {
 
 
 	@PostMapping("/save")
-    public ResponseEntity<Long> save(@RequestBody  @Valid UsuarioEntity usuarioEntity) throws NotFoundException{
+    public ResponseEntity<Long> save(@RequestBody  @Valid UsuarioEntity usuarioEntity, @RequestParam MultipartFile file) throws NotFoundException{
         Optional<UsuarioEntity> usuario = usuarioService.findByEmail(usuarioEntity.getEmail());
         if(usuario.isPresent()){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(usuario.get().getId());
         }
-		return ResponseEntity.ok().body(usuarioService.save(usuarioEntity));
+		return ResponseEntity.ok().body(usuarioService.save(usuarioEntity, file));
 
     }
 
 	@PutMapping("/update") 	
-    public ResponseEntity<Long> update(@RequestBody UsuarioEntity usuarioEntity) throws NotFoundException{
-        return ResponseEntity.ok().body(usuarioService.save(usuarioEntity));
+    public ResponseEntity<Long> update(@RequestBody UsuarioEntity usuarioEntity, @RequestParam MultipartFile file) throws NotFoundException{
+        return ResponseEntity.ok().body(usuarioService.save(usuarioEntity, file));
     }
 	
     @GetMapping("/login")
-    public ResponseEntity<Boolean> login(@RequestParam("login") String login, @RequestParam("senha") String senha) {
+    public ResponseEntity<UsuarioDTO> login(@RequestParam String email, @RequestParam String senha) {
         
         
-        Optional<UsuarioEntity> usuario = usuarioService.findByLogin(login);
+        Optional<UsuarioEntity> usuario = usuarioService.findByEmail(email);
+        UsuarioDTO usuarioDTO = null;
+
         if(!usuario.isPresent()){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(usuarioDTO);
         }
 
         boolean valid = false;
         valid = encoder.matches(senha, usuario.get().getSenha());
 
         HttpStatus status = (valid) ? HttpStatus.OK : HttpStatus.UNAUTHORIZED;
-        return ResponseEntity.status(status).body(valid);
+        usuarioDTO = (valid) ? new UsuarioDTO(usuario.get()) : usuarioDTO;
+        return ResponseEntity.status(status).body(usuarioDTO);
     }
 
     @GetMapping("/findByUsuarioLogado/{id}")

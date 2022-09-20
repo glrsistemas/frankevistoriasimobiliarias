@@ -2,6 +2,8 @@ package br.com.frankevistorias.apifvi.uriAssets;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import br.com.frankevistorias.apifvi.atendimento.AtendimentoEntity;
+import br.com.frankevistorias.apifvi.grupoImagem.GrupoImagemEntity;
+import br.com.frankevistorias.apifvi.subGrupoImagem.SubGrupoImagemEntity;
 import br.com.frankevistorias.apifvi.usuario.UsuarioEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,19 +27,22 @@ public class AssetsDTO implements Serializable {
 	@JsonProperty("uri")
 	private String uri;
 
-	@JsonProperty("idUsuario")
-	private UsuarioEntity usuarioEntity;
-
 	@JsonProperty("idAtendimento")
 	private AtendimentoEntity atendimentoEntity;
+
+	@JsonProperty("idGrupoImagem")
+	private GrupoImagemEntity grupoImagemEntity;
+
+	@JsonProperty("idSubGrupoImagem")
+	private SubGrupoImagemEntity subGrupoImagemEntity;
 
 	public AssetsDTO(AssetsEntity assetsEntity) {
 
 		this.id = assetsEntity.getId();
-		this.formato = assetsEntity.getFormato();
 		this.uri = assetsEntity.getUri();
-		this.usuarioEntity = assetsEntity.getUsuarioEntity();
 		this.atendimentoEntity = assetsEntity.getAtendimentoEntity();
+		this.grupoImagemEntity = assetsEntity.getGrupoImagemEntity();
+		this.subGrupoImagemEntity = assetsEntity.getSubGrupoImagemEntity();
 
 	}
 }

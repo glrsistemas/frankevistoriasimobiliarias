@@ -2,7 +2,8 @@ package br.com.frankevistorias.apifvi.uriAssets;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import br.com.frankevistorias.apifvi.atendimento.AtendimentoEntity;
-import br.com.frankevistorias.apifvi.usuario.UsuarioEntity;
+import br.com.frankevistorias.apifvi.grupoImagem.GrupoImagemEntity;
+import br.com.frankevistorias.apifvi.subGrupoImagem.SubGrupoImagemEntity;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -30,21 +31,21 @@ public class AssetsEntity implements Serializable{
 	@Column(name = "uri")
 	@JsonProperty("uri")
 	private String uri;
-    
-	@NotBlank(message="formato vazio")
-	@Column(name = "formato")
-	@JsonProperty("formato")
-	private String formato;
-
-	@JoinColumns({@JoinColumn(name = "id_usuario", referencedColumnName = "id")})
-    @JsonProperty("idUsuario")
-    @ManyToOne()
-    private UsuarioEntity usuarioEntity;
 
 	@JoinColumns({@JoinColumn(name = "id_atendimento", referencedColumnName = "id")})
     @JsonProperty("idAtendimento")
     @ManyToOne()
     private AtendimentoEntity atendimentoEntity;
+
+	@JoinColumns({@JoinColumn(name = "id_grupo_imagem", referencedColumnName = "id")})
+    @JsonProperty("idGrupoImagem")
+    @ManyToOne()
+    private GrupoImagemEntity grupoImagemEntity;
+
+    @JoinColumns({@JoinColumn(name = "id_sub_grupo_imagem", referencedColumnName = "id")})
+    @JsonProperty("idSubGrupoImagem")
+    @ManyToOne()
+    private SubGrupoImagemEntity subGrupoImagemEntity;
 
 	@Column(name = "dh_registro",columnDefinition="DATETIME")
 	@JsonProperty("dhRegistro")
@@ -55,4 +56,5 @@ public class AssetsEntity implements Serializable{
 	@JsonProperty("dhAtualizacao")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dhAtualizacao;
+
 }

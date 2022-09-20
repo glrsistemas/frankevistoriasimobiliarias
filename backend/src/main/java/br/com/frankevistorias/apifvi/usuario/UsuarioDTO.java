@@ -24,7 +24,6 @@ public class UsuarioDTO implements Serializable{
 	@JsonProperty("id")
 	private Long	id;
 	
-
 	@JsonProperty("nome")
 	private String nome;
 
@@ -49,6 +48,9 @@ public class UsuarioDTO implements Serializable{
     @JsonProperty("idImobiliaria")
     private ImobiliariaEntity imobiliariaEntity;
 
+	@JsonProperty("uri")
+	private String uri;
+
 	@JsonProperty("idEndereco")
 	private EnderecoUsuarioEntity enderecoUsuarioEntity;
     public UsuarioDTO(UsuarioEntity usuarioEntity) {
@@ -62,7 +64,7 @@ public class UsuarioDTO implements Serializable{
         this.celular            =   usuarioEntity.getCelular();
         this.nivel              =   usuarioEntity.getNivel();
         this.imobiliariaEntity  =   usuarioEntity.getImobiliariaEntity();
-
+		this.uri				=	usuarioEntity.getUri();
     }
     
 }

@@ -86,4 +86,9 @@ public class UsuarioEntity implements Serializable{
 	@JsonProperty("dhAtualizacao")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dhAtualizacao;
+
+	@Column(name = "uri")
+	@JsonProperty("uri")
+	private String uri;
+
 }

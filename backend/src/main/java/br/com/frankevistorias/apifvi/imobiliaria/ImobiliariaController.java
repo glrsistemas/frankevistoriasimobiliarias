@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -27,14 +28,14 @@ public class ImobiliariaController {
 	private ImobiliariaService imobiliariaService;
 
 	@PostMapping("/save")
-    public ResponseEntity<Long> save(@RequestBody @Valid ImobiliariaEntity imobiliariaEntity) throws NotFoundException{
-		return ResponseEntity.ok().body(imobiliariaService.save(imobiliariaEntity));
+    public ResponseEntity<Long> save(@RequestBody @Valid ImobiliariaEntity imobiliariaEntity, @RequestParam MultipartFile file) throws NotFoundException{
+		return ResponseEntity.ok().body(imobiliariaService.save(imobiliariaEntity, file));
 
     }
 
 	@PutMapping("/update")
-    public ResponseEntity<Long> update(@RequestBody ImobiliariaEntity imobiliariaEntity) throws NotFoundException{
-        return ResponseEntity.ok().body(imobiliariaService.save(imobiliariaEntity));
+    public ResponseEntity<Long> update(@RequestBody ImobiliariaEntity imobiliariaEntity, @RequestParam MultipartFile file) throws NotFoundException{
+        return ResponseEntity.ok().body(imobiliariaService.save(imobiliariaEntity, file));
     }
 
 	@GetMapping("/findAll")
