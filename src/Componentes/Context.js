@@ -1,5 +1,6 @@
   
 import React, {useEffect, useState } from "react";
+import utils from "../utils";
 // import axios from "axios";
 
 export const Context = React.createContext({});
@@ -20,6 +21,8 @@ export const ContextProvider = (props) => {
   let [imobiliaria, setImobiliaria] = useState([]);
   let [imobiliariaUsuario, setImobiliariaUsuario] = useState([]);
   let [atendimento, setAtendimento] = useState([]);
+
+  console.log(utils.getBaseUrl());
 
   return (
     <Context.Provider value={{ user, setUser, atendimento, setAtendimento, imobiliaria, setImobiliaria, setImobiliariaUsuario, imobiliariaUsuario}}>
