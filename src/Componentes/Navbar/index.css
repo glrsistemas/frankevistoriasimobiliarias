@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@500&display=swap');
+
 
 @font-face {
     font-family: 'Butler';
@@ -6,6 +8,7 @@
     font-weight: normal;
     src: local('Butler'), url('../fonts/Butler.otf') format('opentype');
   }
+
 
 .sidebar {
     background-color: #4E0F1E !important;
@@ -41,7 +44,10 @@
 }
 .header-sidebar {
     text-align: center;
-    margin-top: 10px !important;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5px !important;
 }
 .header-sidebar .header-avatar{
     text-align: center;
@@ -52,16 +58,31 @@
     height: 100%;
     width: 100%;
     border-radius: 50%;
-    border: 1px solid #4E0F1E;
+    border: 2px solid #4E0F1E;
 }
 .header-sidebar .header-name{
     text-align: center;
     font-size: 12px;
     font-weight: bold;
     color: #1d1d1d;
-    padding: 10px !important;
+    margin-top: 5px !important;
+}
+.header-sidebar .header-imob{
+    text-align: center;
+    font-family: 'Dosis';
+    font-size: 14px;
+    font-weight: bold;
+    color: #4e0f1e;
+    padding: 0px !important;
+    margin-bottom: 10px;
 }
 .divider-header {
+    margin-top: 5px;
     border-bottom: 3px solid !important;
     border-image: linear-gradient(to right, #ca9611, #f1af09, #c9930a) 1 !important;
+}
+.divider-header-marsalla {
+    margin-top: 5px;
+    border-bottom: 3px solid !important;
+    border-image: linear-gradient(to right, #330913, #bb0606, #330913) 1 !important;
 }

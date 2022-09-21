@@ -127,16 +127,20 @@ function Home() {
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
+        <DrawerHeader  sx={{ minHeight: '160px'}}>
           <Grid container spacing={2} sm={10} className="header-sidebar">
-          <Avatar  src="https://ccif.com.br/wp-content/uploads/2019/12/diretores_appy_square_pb-2000x2000.png" className={"header-avatar"} sx={{textAlign: 'center', ml: 5, minHeight: '160px'}}/>
-          <Typography variant="body2" className="header-name">
+            <Grid >
+          <Avatar  src="https://ccif.com.br/wp-content/uploads/2019/12/diretores_appy_square_pb-2000x2000.png" className={"header-avatar"}/>
+            </Grid>
+          <Grid>
+          <Typography className="header-name">
           {user.nome + " " + user.sobrenome}  
           </Typography>
-          <Divider className="divider-header"/>
-          <Typography variant="body2" className="header-name center">
+          <Divider className="divider-header-marsalla"/>
+          <Typography variant="body2" className="header-imob center">
           {imobiliariaUsuario.nomeFantasia}
           </Typography>
+          </Grid>
           </Grid>
           <Grid container spacing={2} sm={2}>
           <IconButton onClick={handleDrawerClose} sm={4}>
