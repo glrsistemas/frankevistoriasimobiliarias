@@ -8,12 +8,49 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Navbar from "../Navbar";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import {Typography,Grid,Card,CardContent, Avatar,TextField,MenuItem,FormControl,Select,InputLabel,Switch,FormLabel,FormControlLabel,FormGroup} from "@mui/material";
+import {Typography,Grid,Card,CardContent, Avatar,TextField,MenuItem,FormControl,Select,InputLabel,Switch,FormLabel,FormControlLabel,FormGroup, Box} from "@mui/material";
 import Axios from "axios";
 import useContextApi from "../Context";
+import utils from "../../utils";
 import { SiOpenstreetmap } from "react-icons/si";
 import { GiModernCity } from "react-icons/gi";
 import thumbDefault from "../../assets/default/default.jpg";
+import { useDropzone } from "react-dropzone";
+
+
+const thumbsContainer = {
+  display: 'flex',
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  padding: '0px 25px'
+};
+
+
+const thumb = {
+  display: 'inline-flex',
+  borderRadius: 10,
+  border: '1px solid #eaeaea',
+  alignItems: 'center',
+  marginBottom: 8,
+  marginRight: 8,
+  width: 250,
+  height: 250,
+  padding: 4,
+  boxSizing: 'border-box'
+};
+
+const thumbInner = {
+  display: 'flex',
+  minWidth: 0,
+  overflow: 'hidden',
+  width: '100%',
+  height: '100%'
+};
+
+const img = {
+  display: 'block',
+};
+
 
 export default function Imobiliaria() {
 
@@ -22,6 +59,19 @@ export default function Imobiliaria() {
   const [scroll, setScroll] = React.useState("paper");
   const [cepForm, setCepForm] = React.useState([]);
   const [todasImob, setTodasImob] = useState([]);
+  const {getRootProps, getInputProps} = useDropzone({
+    accept: {
+      'image/jpeg': [],
+      'image/jpg': [],
+      'image/png': []
+    },
+    maxFiles:1,
+    onDrop: acceptedFiles => {
+      setFiles(acceptedFiles.map(file => Object.assign(file, {
+        preview: URL.createObjectURL(file)
+      })));
+    }
+  });
 
   const [nomeFantasia, setNomeFantasia] = useState("");
   const [razaoSocial, setRazaoSocial] = useState("");
@@ -36,10 +86,13 @@ export default function Imobiliaria() {
   const [bairro, setBairro] = useState("");
   const [cidade, setCidade] = useState("");
   const [estado, setEstado] = useState("");
+  const [files, setFiles] = useState([]);
+
+  console.log(files);
 
   useEffect(() => {
-    if (user.nivel === 0) {
-      Axios.get("http://localhost:8080/imobiliaria/findAll")
+    if (user.administrador) {
+      Axios.get(utils.getBaseUrl()+"imobiliaria/findAll")
         .then((res) => {
           setTodasImob(res.data);
         })
@@ -71,7 +124,46 @@ export default function Imobiliaria() {
   };
 
   const handleSubmit = () => {
-   
+    Axios.post(utils.getBaseUrl()+"endereco/save", {
+      cep: cep,
+      bairro: bairro,
+      logradouro: logradouro,
+      cidade: cidade,
+      numero: numero,
+      complemento: complemento,
+      estado: estado,
+    })
+      .then((end) => {
+        if (end.data) {
+          Axios.post(
+            utils.getBaseUrl()+"imobiliaria/save",
+            {
+              nomeFantasia: nomeFantasia,
+                razaoSocial: razaoSocial,
+                ativo: ativo,
+                cnpj: cnpj,
+                celular: celular,
+                email: email,
+            },
+            {   headers: {
+                  "Content-Type": "multipart/form-data",
+                  "Accept": "/*/"
+                },
+                params: {
+                  file: files[0]}               
+            },
+          )
+            .then((usuario) => {
+              console.log("Sucesso ao criar !");
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const handleChange = (e) => {
@@ -113,6 +205,25 @@ export default function Imobiliaria() {
       }
     }
   }, [openCrudImobiliaria]);
+
+  const thumbs = files.map(file => (
+    <div style={thumb} key={file.name ? file.name : thumbDefault}>
+      <div style={thumbInner}>
+        <img
+          src={file.preview ? file.preview : thumbDefault}
+          style={img}
+          // Revoke data uri after image is loaded
+          onLoad={() => { URL.revokeObjectURL(file.preview ? file.preview : thumbDefault) }}
+        />
+      </div>
+    </div>
+  ));
+
+  useEffect(() => {
+    // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
+    return () => files.forEach(file => URL.revokeObjectURL(file.preview));
+  }, []);
+
   return (
     <>
       <Navbar />
@@ -154,6 +265,14 @@ export default function Imobiliaria() {
                     </Typography>
                   </Grid>
                   <Grid mt={1} container spacing={2} sm={12} md={12} lg={12} xl={12}>
+                  <Grid item xs={12} sm={12} md={6} lg={4} xl={3} style={thumbsContainer}>
+                          <Box {...getRootProps({className: 'dropzone dz-image'})}>
+                            <input {...getInputProps()} />
+                            <p>Selecione ou arraste sua Imagem</p>
+                            {thumbs}
+                          </Box>
+                    </Grid>
+                    <Grid container spacing={2} xs={12} sm={12} md={6} lg={8} xl={9}>
                     <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
                       <TextField
                         fullWidth
@@ -230,14 +349,14 @@ export default function Imobiliaria() {
                         variant="outlined"
                       />
                     </Grid>
-                      <Grid item xs={12} sm={12} md={6} lg={2} xl={2}>
+                      <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
                         <FormControl
                           component="fieldset"
-                          sx={{ m: 1, textAlign: "center" }}
+                          sx={{ m: 0, textAlign: "center" }}
                           fullWidth
                         >
                           <FormLabel component="legend">
-                            Imobiliaria Ativa ?
+                            Imobiliaria
                           </FormLabel>
                           <FormGroup sx={{ alignItems: "center" }}>
                             <FormControlLabel
@@ -256,6 +375,7 @@ export default function Imobiliaria() {
                             />
                           </FormGroup>
                         </FormControl>
+                      </Grid>
                       </Grid>
                   </Grid>
                   <Grid
@@ -370,7 +490,7 @@ export default function Imobiliaria() {
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={handleClose}>
+              <Button onClick={handleSubmit}>
                 Adicionar
               </Button>
             </DialogActions>

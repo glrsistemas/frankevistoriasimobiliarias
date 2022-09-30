@@ -86,3 +86,7 @@
     border-bottom: 3px solid !important;
     border-image: linear-gradient(to right, #330913, #bb0606, #330913) 1 !important;
 }
+
+.dz-image {
+    cursor: pointer !important;
+}

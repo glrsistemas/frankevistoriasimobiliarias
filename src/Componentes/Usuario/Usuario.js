@@ -33,7 +33,43 @@ import {
 import Axios from "axios";
 import useContextApi from "../Context";
 import avatarDefault from "../../assets/default/avatar.jpg";
+import {useDropzone} from 'react-dropzone';
 import EditarUsuario from "./EditarUsuario";
+import utils from "../../utils";
+import { GiTemplarShield } from "react-icons/gi";
+
+const thumbsContainer = {
+  display: 'flex',
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  padding: '0px 25px'
+};
+
+const thumb = {
+  display: 'inline-flex',
+  borderRadius: 10,
+  border: '1px solid #eaeaea',
+  alignItems: 'center',
+  marginBottom: 8,
+  marginRight: 8,
+  width: 250,
+  height: 250,
+  padding: 4,
+  boxSizing: 'border-box'
+};
+
+const thumbInner = {
+  display: 'flex',
+  minWidth: 0,
+  overflow: 'hidden',
+  width: '100%',
+  height: '100%'
+};
+
+const img = {
+  display: 'block',
+};
+
 
 export default function Usuario() {
   const { user, imobiliariaUsuario } = useContextApi();
@@ -42,13 +78,30 @@ export default function Usuario() {
   const [cepForm, setCepForm] = React.useState([]);
   const [todasImob, setTodasImob] = useState([]);
   let [listUsuario, setListUsuario] = useState([]);
+  let [listPerfil, setListPerfil] = useState([]);
+  const {getRootProps, getInputProps} = useDropzone({
+    accept: {
+      'image/jpeg': [],
+      'image/jpg': [],
+      'image/png': []
+    },
+    maxFiles:1,
+    onDrop: acceptedFiles => {
+      setFiles(acceptedFiles.map(file => Object.assign(file, {
+        preview: URL.createObjectURL(file)
+      })));
+    }
+  });
+
 
   const [nome, setNome] = useState("");
   const [sobrenome, setSobrenome] = useState("");
   const [imobiliaria, setImobiliaria] = useState("");
+  const [admin, setAdmin] = useState(false);
   const [ativo, setAtivo] = useState(true);
-  const [nivel, setNivel] = useState(1);
+  const [perfilUsuario, setPerfilUsuario] = useState([]);
   const [cpf, setCpf] = useState("");
+  const [perfilUsuarioSelecionado, setPerfilUsuarioSelecionado] = useState("");
   const [celular, setCelular] = useState("");
   const [email, setEmail] = useState("");
   const [login, setLogin] = useState("");
@@ -60,23 +113,24 @@ export default function Usuario() {
   const [bairro, setBairro] = useState("");
   const [cidade, setCidade] = useState("");
   const [estado, setEstado] = useState("");
+  const [files, setFiles] = useState([]);
+
+  let dev = true;
 
   useEffect(() => {
-    if (user.nivel === 0) {
-      Axios.get("http://localhost:8080/imobiliaria/findAll")
+      Axios.get(utils.getBaseUrl()+"imobiliaria/findAll")
         .then((res) => {
           setTodasImob(res.data);
         })
         .catch((err) => {
           console.log(err);
         });
-    }
   }, todasImob);
 
   useEffect(() => {
     let listaUsuario = [];
 
-    Axios.get("http://localhost:8080/usuario/findAll")
+    Axios.get(utils.getBaseUrl()+"usuario/findAll")
       .then((res) => {
         listaUsuario = res.data;
         setListUsuario(listaUsuario);
@@ -86,6 +140,19 @@ export default function Usuario() {
         console.log(err);
       });
   }, listUsuario);
+
+  useEffect(() => {
+    let listaPerfil = [];
+
+    Axios.get(utils.getBaseUrl()+"perfilUsuario/findAll")
+      .then((res) => {
+        listaPerfil = res.data;
+        setListPerfil(listaPerfil);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, listPerfil);
 
   const dataFormatada = (timestamp) => {
     let data = new Date(timestamp);
@@ -114,75 +181,69 @@ export default function Usuario() {
       imobiliaria !== undefined ||
       imobiliaria !== null
     ) {
-      Axios.get("http://localhost:8080/imobiliaria/findById/" + imobiliaria)
+      Axios.get(utils.getBaseUrl()+"imobiliaria/findById/" + imobiliaria)
         .then((res) => {
           let imobiliariaSelecionada =
-            user.nivel === 0 ? res.data : imobiliariaUsuario;
+            (dev) ? res.data : imobiliariaUsuario;
 
           if (imobiliariaSelecionada) {
-            if (nivel === "" || nivel === undefined || nivel === null) {
-              setNivel(1);
-            }
-
-            Axios.post("http://localhost:8080/usuario/save", {
+            if (perfilUsuario === "" || perfilUsuario === undefined || perfilUsuario === null) {
+              setPerfilUsuarioSelecionado({
+                "id": 3,
+                "constante": "GESTOR_FVI",
+                "descricao": "Gestor Franke Vistorias",
+                "nivel": 1,
+                "tipo_usuario": "USUARIO_FVI"
+              });
+            }else {
+              Axios.get(utils.getBaseUrl()+"perfilUsuario/findById/" + perfilUsuario).then((res) => {
+                setPerfilUsuarioSelecionado(res.data);
+            }).catch((err) => {
+              console.log(err);
+            })
+          }
+          
+            Axios.post(utils.getBaseUrl()+"endereco/save", {
+              cep: cep,
+              bairro: bairro,
+              logradouro: logradouro,
+              cidade: cidade,
+              numero: numero,
+              complemento: complemento,
+              estado: estado,
+            }).then((end) => {                       
+              if(end.data){
+            Axios.post(utils.getBaseUrl()+"usuario/save", files,{
               nome: nome,
               sobrenome: sobrenome,
               idImobiliaria: imobiliariaSelecionada,
               ativo: ativo,
-              nivel: nivel,
+              perfilUsuario: perfilUsuarioSelecionado,
               cpf: cpf,
               email: email,
               celular: celular,
               login: login,
               senha: senha,
-            })
-              .then((usuario) => {
-                let idUsuCadastrado = usuario.data;
-
-                if (idUsuCadastrado) {
-                  Axios.get(
-                    "http://localhost:8080/usuario/findById/" + idUsuCadastrado
-                  )
-                    .then((usuEnd) => {
-                      let usuarioCadastrado = usuEnd.data;
-                      if (usuarioCadastrado) {
-                        Axios.post("http://localhost:8080/endereco/save", {
-                          cep: cep,
-                          bairro: bairro,
-                          logradouro: logradouro,
-                          cidade: cidade,
-                          numero: numero,
-                          complemento: complemento,
-                          estado: estado,
-                          idUsuario: usuarioCadastrado,
+              idEndereco: end.data.id,
+              adminstrativo: admin
+            },{headers: {
+              "Content-Type": "multipart/form-data"
+            }}).then((usuario) => {
+                console.log("Sucesso ao criar !");
+                        }).catch((err) => {
+                          console.log(err);
                         })
-                          .then((success) => {
-                            console.log("Sucesso ao criar !");
-                          })
-                          .catch((error) => {
-                            console.log(
-                              "Erro ao adicionar o Endereço, verifique novamente mais tarde !"
-                            );
-                          });
                       }
+                      }).catch((err) => {
+                        console.log(err);
+                      })
+                    }
+                    }).catch((err) => {
+                      console.log(err);
                     })
-                    .catch((error) => {
-                      console.log(
-                        "Usuário Cadastrado, porém com algumas inconsistências!"
-                      );
-                    });
-                }
-              })
-              .catch((error) => {
-                console.log("Erro ao cadastrar Usuário");
-              });
-          }
-        })
-        .catch((err) => {
-          console.log("Erro ao buscar Imobiliaria");
-        });
-    }
-  };
+                  }
+                
+              }
 
   const handleChange = (e) => {
     let buscaCep = e.target.value;
@@ -223,6 +284,25 @@ export default function Usuario() {
       }
     }
   }, [openCrudUsuario]);
+
+  const thumbs = files.map(file => (
+    <div style={thumb} key={file.name ? file.name : avatarDefault}>
+      <div style={thumbInner}>
+        <img
+          src={file.preview ? file.preview : avatarDefault}
+          style={img}
+          // Revoke data uri after image is loaded
+          onLoad={() => { URL.revokeObjectURL(file.preview ? file.preview : avatarDefault) }}
+        />
+      </div>
+    </div>
+  ));
+
+  useEffect(() => {
+    // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
+    return () => files.forEach(file => URL.revokeObjectURL(file.preview));
+  }, []);
+
 
   return (
     <>
@@ -272,6 +352,14 @@ export default function Usuario() {
                     </Typography>
                   </Grid>
                   <Grid container spacing={2} sm={12} md={12} lg={12} xl={12}>
+                  <Grid item xs={12} sm={12} md={6} lg={4} xl={3} style={thumbsContainer}>
+                          <Box {...getRootProps({className: 'dropzone dz-image'})}>
+                            <input {...getInputProps()} />
+                            <p>Selecione ou arraste sua Imagem</p>
+                            {thumbs}
+                          </Box>
+                    </Grid>
+                    <Grid container spacing={2} xs={12} sm={12} md={6} lg={8} xl={9}>
                     <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
                       <TextField
                         fullWidth
@@ -322,7 +410,7 @@ export default function Usuario() {
                         variant="outlined"
                       />
                     </Grid>
-                    {user.nivel === 0 && (
+                    {(dev) && 
                       <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
                         <FormControl sx={{ m: 1 }} fullWidth>
                           <InputLabel id="label-select-imobiliaria">
@@ -348,32 +436,34 @@ export default function Usuario() {
                           </Select>
                         </FormControl>
                       </Grid>
-                    )}
-                    {user.nivel === 0 && (
+                    }
+                    {(dev) &&
                       <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
                         <FormControl sx={{ m: 1 }} fullWidth>
-                          <InputLabel id="label-select-nivel">
-                            Nível Usuário
+                          <InputLabel id="label-select-perfil-usuario">
+                            Perfil Usuário
                           </InputLabel>
                           <Select
-                            labelId="label-select-nivel"
-                            id="nivel"
-                            value={nivel}
+                            labelId="label-select-perfil-usuario"
+                            id="perfil_usuario"
+                            value={perfilUsuario}
                             defaultValue={""}
                             onChange={(e) => {
-                              setNivel(e.target.value);
+                              setPerfilUsuario(e.target.value);
                             }}
-                            label="Nível Usuário"
+                            label="Perfil Usuário"
                             variant="outlined"
                           >
                             <MenuItem value="">Selecione</MenuItem>
-                            <MenuItem value={0}> 0 - Administrador</MenuItem>
-                            <MenuItem value={1}> 1 - Usuário Gestor</MenuItem>
-                            <MenuItem value={2}> 2 - Usuário Comum</MenuItem>
+                            {listPerfil.map((pu) => (
+                              <MenuItem value={pu.id}>
+                                {pu.id + " - " + pu.descricao}
+                              </MenuItem>
+                            ))}
                           </Select>
                         </FormControl>
                       </Grid>
-                    )}
+                    }
                     <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
                       <TextField
                         label="E-mail"
@@ -416,7 +506,8 @@ export default function Usuario() {
                         variant="outlined"
                       />
                     </Grid>
-                    {user.nivel === 0 && (
+                    {(dev) &&
+                      <>
                       <Grid item xs={12} sm={12} md={6} lg={2} xl={2}>
                         <FormControl
                           component="fieldset"
@@ -444,7 +535,36 @@ export default function Usuario() {
                           </FormGroup>
                         </FormControl>
                       </Grid>
-                    )}
+                      <Grid item xs={12} sm={12} md={6} lg={2} xl={2}>
+                      <FormControl
+                        component="fieldset"
+                        sx={{ m: 1, textAlign: "center" }}
+                        fullWidth
+                      >
+                        <FormLabel component="legend">
+                          Admin ?
+                        </FormLabel>
+                        <FormGroup sx={{ alignItems: "center" }}>
+                          <FormControlLabel
+                            control={
+                              <Switch
+                                checked={admin}
+                                justifyContent="center"
+                                onChange={(e) => {
+                                  setAdmin(e.target.checked);
+                                }}
+                                inputProps={{ "aria-label": "Administrador" }}
+                                name="admin"
+                              />
+                            }
+                            label={admin ? "Sim" : "Não"}
+                          />
+                        </FormGroup>
+                      </FormControl>
+                    </Grid>
+                    </>
+                    }
+                  </Grid>
                   </Grid>
                   <Grid
                     container

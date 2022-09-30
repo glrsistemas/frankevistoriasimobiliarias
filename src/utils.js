@@ -19,7 +19,7 @@ let utils = {
     if (domain.indexOf("localhost") >= 0 || domain.indexOf("127.0.0.1") >= 0) {
       return protocol + "localhost:8080/";
     } else if (domain.indexOf("frankevistorias.com.br") >= 0) {
-      return protocol + "api.frankevistoria.com.br/";
+      return protocol + "apifvi.azurewebsites.net/";
     }
   },
   todasImobcapitalizeAll: function (str, lower = true) {

@@ -15,6 +15,7 @@ import Axios from "axios";
 import useContextApi from "../Context";
 import {useDropzone} from 'react-dropzone';
 import avatarDefault from "../../assets/default/avatar.jpg";
+import utils from "../../utils";
 
 
 const thumbsContainer = {
@@ -57,13 +58,16 @@ export default function EditarUsuario(props) {
   const [cepForm, setCepForm] = React.useState([]);
   const [userById, setUserById] = React.useState([]);
   const [todasImob, setTodasImob] = useState([]);
+  let [listPerfil, setListPerfil] = useState([]);
 
   const [nome, setNome] = useState("");
   const [sobrenome, setSobrenome] = useState("");
   const [imobiliaria, setImobiliaria] = useState("");
+  const [admin, setAdmin] = useState(false);
   const [ativo, setAtivo] = useState(true);
-  const [nivel, setNivel] = useState(1);
+  const [perfilUsuario, setPerfilUsuario] = useState([]);
   const [cpf, setCpf] = useState("");
+  const [perfilUsuarioSelecionado, setPerfilUsuarioSelecionado] = useState("");
   const [celular, setCelular] = useState("");
   const [email, setEmail] = useState("");
   const [login, setLogin] = useState("");
@@ -88,7 +92,7 @@ export default function EditarUsuario(props) {
   });
 
   const buscaUserById = () => {
-    Axios.get("http://localhost:8080/usuario/findById/"+idUsuario).then((res) => {
+    Axios.get(utils.getBaseUrl()+"usuario/findById/"+idUsuario).then((res) => {
       let dados = res.data;
 
       setNome(dados.nome);
@@ -126,6 +130,19 @@ export default function EditarUsuario(props) {
     // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
     return () => files.forEach(file => URL.revokeObjectURL(file.preview));
   }, []);
+
+  useEffect(() => {
+    let listaPerfil = [];
+
+    Axios.get(utils.getBaseUrl()+"perfilUsuario/findAll")
+      .then((res) => {
+        listaPerfil = res.data;
+        setListPerfil(listaPerfil);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, listPerfil);
 
   const [open, setOpen] = React.useState(false);
 
@@ -297,27 +314,29 @@ export default function EditarUsuario(props) {
                         variant="outlined"
                       />
                       </Grid>
-                    {user.nivel === 0 && (
+                    {user.perfilUsuario.nivel === 0 && (
                       <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
                         <FormControl sx={{ m: 1 }} fullWidth>
-                          <InputLabel id="label-select-nivel">
-                            Nível Usuário
+                        <InputLabel id="label-select-perfil-usuario">
+                            Perfil Usuário
                           </InputLabel>
                           <Select
-                            labelId="label-select-nivel"
-                            id="nivel"
-                            value={nivel}
-                            defaultValue={nivel}
+                            labelId="label-select-perfil-usuario"
+                            id="perfil_usuario"
+                            value={perfilUsuario}
+                            defaultValue={""}
                             onChange={(e) => {
-                              setNivel(e.target.value);
+                              setPerfilUsuario(e.target.value);
                             }}
-                            label="Nível Usuário"
+                            label="Perfil Usuário"
                             variant="outlined"
                           >
                             <MenuItem value="">Selecione</MenuItem>
-                            <MenuItem value={0}> 0 - Administrador</MenuItem>
-                            <MenuItem value={1}> 1 - Usuário Gestor</MenuItem>
-                            <MenuItem value={2}> 2 - Usuário Comum</MenuItem>
+                            {listPerfil.map((pu) => (
+                              <MenuItem value={pu.id}>
+                                {pu.id + " - " + pu.descricao}
+                              </MenuItem>
+                            ))}
                           </Select>
                         </FormControl>
                       </Grid>
@@ -370,7 +389,7 @@ export default function EditarUsuario(props) {
                         variant="outlined"
                       />
                     </Grid>
-                    {user.nivel === 0 && (
+                    {user.perfilUsuario.nivel === 0 && (
                       <Grid item xs={12} sm={12} md={6} lg={2} xl={2}>
                         <FormControl
                           component="fieldset"
