@@ -54,7 +54,7 @@ const img = {
 
 export default function Imobiliaria() {
 
-  const { user, imobiliariaUsuario } = useContextApi();
+  const { user, imobiliariaUsuario, setUser } = useContextApi();
   const [openCrudImobiliaria, setOpenCrudImobiliaria] = React.useState(false);
   const [scroll, setScroll] = React.useState("paper");
   const [cepForm, setCepForm] = React.useState([]);
@@ -88,10 +88,11 @@ export default function Imobiliaria() {
   const [estado, setEstado] = useState("");
   const [files, setFiles] = useState([]);
 
+
   console.log(files);
 
   useEffect(() => {
-    if (user.administrador) {
+    if (!user.administrador) {
       Axios.get(utils.getBaseUrl()+"imobiliaria/findAll")
         .then((res) => {
           setTodasImob(res.data);
@@ -124,6 +125,17 @@ export default function Imobiliaria() {
   };
 
   const handleSubmit = () => {
+
+    let formImob = new FormData();
+
+    formImob.append("nomeFantasia", nomeFantasia);
+    formImob.append("razaoSocial", razaoSocial);
+    formImob.append("ativo", ativo);
+    formImob.append("cnpj", cnpj);
+    formImob.append("celular", celular);
+    formImob.append("email", email);
+    formImob.append("file", files[0]);
+
     Axios.post(utils.getBaseUrl()+"endereco/save", {
       cep: cep,
       bairro: bairro,
@@ -137,20 +149,10 @@ export default function Imobiliaria() {
         if (end.data) {
           Axios.post(
             utils.getBaseUrl()+"imobiliaria/save",
-            {
-              nomeFantasia: nomeFantasia,
-                razaoSocial: razaoSocial,
-                ativo: ativo,
-                cnpj: cnpj,
-                celular: celular,
-                email: email,
-            },
+            formImob,
             {   headers: {
                   "Content-Type": "multipart/form-data",
-                  "Accept": "/*/"
-                },
-                params: {
-                  file: files[0]}               
+                }               
             },
           )
             .then((usuario) => {
@@ -270,6 +272,7 @@ export default function Imobiliaria() {
                             <input {...getInputProps()} />
                             <p>Selecione ou arraste sua Imagem</p>
                             {thumbs}
+                            {}
                           </Box>
                     </Grid>
                     <Grid container spacing={2} xs={12} sm={12} md={6} lg={8} xl={9}>
@@ -532,9 +535,9 @@ export default function Imobiliaria() {
                 <Grid  md={12} xl={12}>
                   <Grid item>
                     <Avatar
-                      alt="Nome Imobiliaria"
+                      alt={imob.nomeFantasia}
                       variant="rounded"
-                      src={thumbDefault}
+                      src={imob.uri ? imob.uri : thumbDefault}
                       sx={{ width: "100%", height: "100%" }}
                     />
                   </Grid>
