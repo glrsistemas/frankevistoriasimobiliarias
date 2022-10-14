@@ -79,7 +79,8 @@ export default function EditarUsuario(props) {
   const [bairro, setBairro] = useState("");
   const [cidade, setCidade] = useState("");
   const [estado, setEstado] = useState("");
-  const [files, setFiles] = useState([]);
+  const [avatar, setAvatar] = useState(""); 
+  const [files, setFiles] = useState([]); 
   const {getRootProps, getInputProps} = useDropzone({
     accept: {
       'image/*': []
@@ -105,6 +106,7 @@ export default function EditarUsuario(props) {
       setLogin(dados.login);
       setSenha(dados.senha);
       setCep(dados.cep);
+      setAvatar(dados.uri);
 
       console.log(dados.idImobiliaria.id)
 
@@ -117,7 +119,7 @@ export default function EditarUsuario(props) {
     <div style={thumb} key={file.name ? file.name : avatarDefault}>
       <div style={thumbInner}>
         <img
-          src={file.preview ? file.preview : avatarDefault}
+          src={file.preview ? file.preview : (avatar ? avatar : avatarDefault)}
           style={img}
           // Revoke data uri after image is loaded
           onLoad={() => { URL.revokeObjectURL(file.preview ? file.preview : avatarDefault) }}
@@ -314,7 +316,6 @@ export default function EditarUsuario(props) {
                         variant="outlined"
                       />
                       </Grid>
-                    {user.perfilUsuario.nivel === 0 && (
                       <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
                         <FormControl sx={{ m: 1 }} fullWidth>
                         <InputLabel id="label-select-perfil-usuario">
@@ -340,7 +341,6 @@ export default function EditarUsuario(props) {
                           </Select>
                         </FormControl>
                       </Grid>
-                    )}
                     <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
                       <TextField
                         label="E-mail"
@@ -389,7 +389,6 @@ export default function EditarUsuario(props) {
                         variant="outlined"
                       />
                     </Grid>
-                    {user.perfilUsuario.nivel === 0 && (
                       <Grid item xs={12} sm={12} md={6} lg={2} xl={2}>
                         <FormControl
                           component="fieldset"
@@ -417,7 +416,6 @@ export default function EditarUsuario(props) {
                           </FormGroup>
                         </FormControl>
                       </Grid>
-                    )}
                     </Grid>
                   </Grid>
                   <Grid

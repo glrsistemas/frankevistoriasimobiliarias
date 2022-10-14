@@ -134,12 +134,12 @@ export default function Usuario() {
       .then((res) => {
         listaUsuario = res.data;
         setListUsuario(listaUsuario);
-        console.log(listaUsuario);
       })
       .catch((err) => {
         console.log(err);
       });
   }, listUsuario);
+
 
   useEffect(() => {
     let listaPerfil = [];
@@ -213,23 +213,29 @@ export default function Usuario() {
               estado: estado,
             }).then((end) => {                       
               if(end.data){
-            Axios.post(utils.getBaseUrl()+"usuario/save", files,{
-              nome: nome,
-              sobrenome: sobrenome,
-              idImobiliaria: imobiliariaSelecionada,
-              ativo: ativo,
-              perfilUsuario: perfilUsuarioSelecionado,
-              cpf: cpf,
-              email: email,
-              celular: celular,
-              login: login,
-              senha: senha,
-              idEndereco: end.data.id,
-              adminstrativo: admin
-            },{headers: {
-              "Content-Type": "multipart/form-data"
-            }}).then((usuario) => {
+              
+              let formUsu = new FormData();
+              formUsu.append("nome", nome);
+              formUsu.append("sobrenome", sobrenome);
+              formUsu.append("idImobiliaria", imobiliariaSelecionada);
+              formUsu.append("ativo", ativo);
+              formUsu.append("idPerfilUsuario", perfilUsuarioSelecionado);
+              formUsu.append("cpf", cpf);
+              formUsu.append("email", email);
+              formUsu.append("celular", celular);
+              formUsu.append("login", login);
+              formUsu.append("senha", senha);
+              formUsu.append("idEndereco", end.data.id);
+              formUsu.append("adminstrativo", admin);
+              formUsu.append("file", files[0]);
+            Axios.post(utils.getBaseUrl()+"usuario/save",
+            formUsu, {   headers: {
+              "Content-Type": "multipart/form-data",
+            }               
+        }).then((usuario) => {
                 console.log("Sucesso ao criar !");
+                utils.response("Sucesso ao Criar !", "O usuário foi inserido com sucesso.", null, "success", "green");
+                setOpenCrudUsuario(false);
                         }).catch((err) => {
                           console.log(err);
                         })
