@@ -154,27 +154,6 @@ export default function Usuario() {
       });
   }, listPerfil);
 
-  const dataFormatada = (timestamp) => {
-    let data = new Date(timestamp);
-
-    let dia = data.getDay();
-    let mes = data.getMonth();
-    let ano = data.getFullYear();
-    let hora = data.getHours();
-    let minuto = data.getMinutes();
-
-    if (dia < 10) {
-      dia = "0" + dia;
-    }
-
-    if (mes < 10) {
-      mes = "0" + mes;
-    }
-    data = dia + "/" + mes + "/" + ano + " " + hora + ":" + minuto;
-
-    return data + "";
-  };
-
   const handleSubmit = () => {
     if (
       imobiliaria !== "" ||
@@ -211,25 +190,27 @@ export default function Usuario() {
               numero: numero,
               complemento: complemento,
               estado: estado,
-            }).then((end) => {                       
+            }).then((end) => {      
+              
+              console.log(end);
               if(end.data){
               
-              let formUsu = new FormData();
-              formUsu.append("nome", nome);
-              formUsu.append("sobrenome", sobrenome);
-              formUsu.append("idImobiliaria", imobiliariaSelecionada);
-              formUsu.append("ativo", ativo);
-              formUsu.append("idPerfilUsuario", perfilUsuarioSelecionado);
-              formUsu.append("cpf", cpf);
-              formUsu.append("email", email);
-              formUsu.append("celular", celular);
-              formUsu.append("login", login);
-              formUsu.append("senha", senha);
-              formUsu.append("idEndereco", end.data.id);
-              formUsu.append("adminstrativo", admin);
-              formUsu.append("file", files[0]);
             Axios.post(utils.getBaseUrl()+"usuario/save",
-            formUsu, {   headers: {
+            {
+              "nome": nome,
+              "sobrenome": sobrenome,
+              "imobiliariaEntity": imobiliariaSelecionada.id,
+              "perfilUsuario": perfilUsuarioSelecionado.id,
+              "ativo": ativo,
+              "cpf": cpf,
+              "email": email,
+              "celular": celular,
+              "login": login,
+              "senha": senha,
+              "endereco": end.data,
+              "administrativo": admin,
+              "file": files[0]
+            }, {   headers: {
               "Content-Type": "multipart/form-data",
             }               
         }).then((usuario) => {
@@ -728,7 +709,7 @@ export default function Usuario() {
                     <Grid item sm={6}>
                       <Avatar
                         alt={usu.nome + usu.sobrenome}
-                        src={avatarDefault}
+                        src={usu.uri}
                         sx={{ width: "100%", height: "100%", padding: "10px" }}
                       />
                     </Grid>
@@ -753,7 +734,7 @@ export default function Usuario() {
                       <span className="dados-imobiliaria">
                         Data de Criação:
                       </span>
-                      {dataFormatada(usu.dhRegistro)}
+                      {utils.dataFormatada(usu.dhRegistro)}
                     </Grid>
                   </Grid>
                   <Divider mt={2} />

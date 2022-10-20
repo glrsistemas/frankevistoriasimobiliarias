@@ -103,27 +103,6 @@ export default function Imobiliaria() {
     }
   }, todasImob);
 
-  const dataFormatada = (timestamp) => {
-    let data = new Date(timestamp);
-
-    let dia = data.getDay();
-    let mes = data.getMonth();
-    let ano = data.getFullYear();
-    let hora = data.getHours();
-    let minuto = data.getMinutes();
-
-    if (dia < 10) {
-      dia = "0" + dia;
-    }
-
-    if (mes < 10) {
-      mes = "0" + mes;
-    }
-    data = dia + "/" + mes + "/" + ano + " " + hora + ":" + minuto;
-
-    return data + "";
-  };
-
   const handleSubmit = () => {
 
     let formImob = new FormData();
@@ -548,7 +527,7 @@ export default function Imobiliaria() {
                     <Grid className="linha-dados"> <span className="dados-imobiliaria">Código:</span>{imob.id}</Grid>
                     <Grid className="linha-dados"> <span className="dados-imobiliaria">Cidade:</span>Cascavel-PR</Grid>
                     <Grid className="linha-dados"> <span className="dados-imobiliaria">Atendimentos:</span> 0</Grid>
-                    <Grid className="linha-dados"> <span className="dados-imobiliaria">Data de Criação:</span>{dataFormatada(imob.dhRegistro)}</Grid>
+                    <Grid className="linha-dados"> <span className="dados-imobiliaria">Data de Criação:</span>{utils.dataFormatada(imob.dhRegistro)}</Grid>
                   </Grid>
                   <Grid  mt={2} item sx={{fontSize: "12px"}}>
                  <Button variant="contained"

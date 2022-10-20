@@ -130,7 +130,7 @@ function Home() {
         <DrawerHeader  sx={{ minHeight: '160px'}}>
           <Grid container spacing={2} sm={10} className="header-sidebar">
             <Grid >
-          <Avatar  src="https://ccif.com.br/wp-content/uploads/2019/12/diretores_appy_square_pb-2000x2000.png" className={"header-avatar"}/>
+          <Avatar  src={user.uri ? user.uri : ''} className={"header-avatar"}/>
             </Grid>
           <Grid>
           <Typography className="header-name">

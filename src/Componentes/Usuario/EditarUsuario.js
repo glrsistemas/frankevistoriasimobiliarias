@@ -105,8 +105,9 @@ export default function EditarUsuario(props) {
       setEmail(dados.email);
       setLogin(dados.login);
       setSenha(dados.senha);
-      setCep(dados.cep);
+      setCepForm(dados.idEndereco);
       setAvatar(dados.uri);
+      setPerfilUsuario(dados.idPerfilUsuario.id);
 
       console.log(dados.idImobiliaria.id)
 
@@ -158,9 +159,11 @@ export default function EditarUsuario(props) {
     setOpen(false);
   };
 
-  const handleUpdate = () => {}
+  const handleUpdate = () => {
 
-  const handleChange = (e) => {
+  }
+
+  const buscaCep = (e) => {
     let buscaCep = e.target.value;
 
     if (buscaCep.length === 8) {
@@ -325,7 +328,7 @@ export default function EditarUsuario(props) {
                             labelId="label-select-perfil-usuario"
                             id="perfil_usuario"
                             value={perfilUsuario}
-                            defaultValue={""}
+                            defaultValue={perfilUsuario ? perfilUsuario : ""}
                             onChange={(e) => {
                               setPerfilUsuario(e.target.value);
                             }}
@@ -443,11 +446,11 @@ export default function EditarUsuario(props) {
                         id="cep"
                         required
                         name="cep"
-                        defaultValue={""}
+                        defaultValue={cepForm.cep ? cepForm.cep : ""}
                         value={cepForm.cep}
                         type="text"
                         variant="outlined"
-                        onChange={(e) => handleChange(e)}
+                        onChange={(e) => buscaCep(e)}
                       />
                     </Grid>
                     <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
@@ -457,7 +460,10 @@ export default function EditarUsuario(props) {
                         id="logradouro"
                         required
                         name="logradouro"
-                        defaultValue={""}
+                        onChange={(e) => {
+                          setLogradouro(e.target.value);
+                        }}
+                        defaultValue={cepForm.logradouro}
                         value={cepForm.logradouro}
                         variant="outlined"
                       />
@@ -472,7 +478,7 @@ export default function EditarUsuario(props) {
                         id="numero"
                         required
                         name="numero"
-                        defaultValue={""}
+                        defaultValue={cepForm.numero ? cepForm.numero : ""}
                         variant="outlined"
                       />
                     </Grid>
@@ -485,7 +491,7 @@ export default function EditarUsuario(props) {
                         onChange={(e) => {
                           setComplemento(e.target.value);
                         }}
-                        defaultValue={""}
+                        defaultValue={cepForm.complemento ? cepForm.complemento : ""}
                         variant="outlined"
                       />
                     </Grid>
@@ -496,7 +502,7 @@ export default function EditarUsuario(props) {
                         id="bairro"
                         required
                         name="bairro"
-                        defaultValue={""}
+                        defaultValue={cepForm.bairro ? cepForm.bairro : ""}
                         value={cepForm.bairro}
                         variant="outlined"
                       />
@@ -508,7 +514,7 @@ export default function EditarUsuario(props) {
                         id="cidade"
                         required
                         name="cidade"
-                        defaultValue={""}
+                        defaultValue={cepForm.cidade ? cepForm.cidade : ""}
                         value={cepForm.localidade}
                         variant="outlined"
                       />
@@ -520,7 +526,7 @@ export default function EditarUsuario(props) {
                         id="estado"
                         required
                         name="estado"
-                        defaultValue={""}
+                        defaultValue={cepForm.estado ? cepForm.estado : ""}
                         value={cepForm.uf}
                         variant="outlined"
                       />

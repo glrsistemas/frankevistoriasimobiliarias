@@ -14,8 +14,6 @@ let utils = {
 
     let domain = window.location.hostname;
 
-    console.log(domain);
-
     if (window.location.protocol === "https:") {
       protocol = "https://";
     } else {
@@ -57,6 +55,26 @@ let utils = {
       }
     }
     return {};
+  },
+  dataFormatada : (timestamp) => {
+    let data = new Date(timestamp);
+
+    let dia = data.getDate();
+    let mes = data.getMonth()+1;
+    let ano = data.getFullYear();
+    let hora = data.getHours();
+    let minuto = data.getMinutes();
+
+    if (dia < 10) {
+      dia = "0" + dia;
+    }
+
+    if (mes < 10) {
+      mes = "0" + mes;
+    }
+    data = dia + "/" + mes + "/" + ano + " " + hora + ":" + minuto;
+
+    return data + "";
   },
   getMonth: function (d) {
     if (!d) {

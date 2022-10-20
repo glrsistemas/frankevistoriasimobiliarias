@@ -22,8 +22,6 @@ export const ContextProvider = (props) => {
   let [imobiliariaUsuario, setImobiliariaUsuario] = useState([]);
   let [atendimento, setAtendimento] = useState([]);
 
-  console.log(utils.getBaseUrl());
-
   return (
     <Context.Provider value={{ user, setUser, atendimento, setAtendimento, imobiliaria, setImobiliaria, setImobiliariaUsuario, imobiliariaUsuario}}>
       {props.children}
