@@ -8,7 +8,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Navbar from "../Navbar";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import {Typography,Grid,Card,CardContent, Avatar,TextField,MenuItem,FormControl,Select,InputLabel,Switch,FormLabel,FormControlLabel,FormGroup, Box} from "@mui/material";
+import {Typography,Grid,Card,CardContent, Avatar,TextField,MenuItem,FormControl,Select,InputLabel,Switch,FormLabel,FormControlLabel,FormGroup, Box, Backdrop, CircularProgress} from "@mui/material";
 import Axios from "axios";
 import useContextApi from "../Context";
 import utils from "../../utils";
@@ -54,7 +54,7 @@ const img = {
 
 export default function Imobiliaria() {
 
-  const { user, imobiliariaUsuario, setUser } = useContextApi();
+  const { user, imobiliariaUsuario, setUser, isLoading, setIsLoading} = useContextApi();
   const [openCrudImobiliaria, setOpenCrudImobiliaria] = React.useState(false);
   const [scroll, setScroll] = React.useState("paper");
   const [cepForm, setCepForm] = React.useState([]);
@@ -92,20 +92,23 @@ export default function Imobiliaria() {
   console.log(files);
 
   useEffect(() => {
-    if (!user.administrador) {
+    setIsLoading(true);
       Axios.get(utils.getBaseUrl()+"imobiliaria/findAll")
         .then((res) => {
           setTodasImob(res.data);
+          setIsLoading(false);
         })
         .catch((err) => {
           console.log(err);
+          setIsLoading(false);
         });
-    }
   }, todasImob);
 
   const handleSubmit = () => {
 
     let formImob = new FormData();
+
+    setIsLoading(true);
 
     formImob.append("nomeFantasia", nomeFantasia);
     formImob.append("razaoSocial", razaoSocial);
@@ -136,9 +139,12 @@ export default function Imobiliaria() {
           )
             .then((usuario) => {
               console.log("Sucesso ao criar !");
+              setIsLoading(false);
+              setOpenCrudImobiliaria(false);
             })
             .catch((err) => {
               console.log(err);
+              setIsLoading(false);
             });
         }
       })
@@ -151,6 +157,7 @@ export default function Imobiliaria() {
     let buscaCep = e.target.value;
 
     if (buscaCep.length === 8) {
+      setIsLoading(true);
       Axios.get("https://viacep.com.br/ws/" + buscaCep + "/json/")
         .then((res) => {
           let dado = res.data;
@@ -160,9 +167,13 @@ export default function Imobiliaria() {
           setCidade(dado.localidade);
           setEstado(dado.uf);
           setCepForm(dado);
+
+          setIsLoading(false);
         })
-        .catch((err) => {
+        .catch((err) => 
+        {
           console.log(err.message);
+          setIsLoading(false);
         });
     }
   };
@@ -207,6 +218,13 @@ export default function Imobiliaria() {
 
   return (
     <>
+    <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1301 }}
+          open={isLoading}
+          >
+            <CircularProgress color="inherit" />
+          {/* <RiLoader4Line/> */}
+          </Backdrop>
       <Navbar />
       {openCrudImobiliaria && (
         <div>

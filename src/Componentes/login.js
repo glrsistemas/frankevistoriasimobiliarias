@@ -12,7 +12,8 @@ import LogoAlt from "../assets/logoFrankeAltDark.png";
 import styled from "@emotion/styled";
 import Axios from "axios";
 import useContextApi from "../Componentes/Context";
-import { Alert, AlertTitle, Snackbar } from "@mui/material";
+import {RiLoader4Line} from 'react-icons/ri';
+import { Alert, AlertTitle, Backdrop, CircularProgress, Snackbar } from "@mui/material";
 import utils from '../utils';
 
 function Copyright(props) {
@@ -40,9 +41,10 @@ const theme = createTheme();
 export default function SignIn() {
   let [toast, setToast] = React.useState(false);
   let [toastType, setToastType] = React.useState(false);
-  const { setUser, setImobiliariaUsuario } = useContextApi();
+  const { setUser, setImobiliariaUsuario, isLoading, setIsLoading } = useContextApi();
 
   const validaLogin = () => {
+    setIsLoading(true);
     const data = new FormData(document.querySelector("form"));
     Axios.get(utils.getBaseUrl() +"usuario/login", {
       params: {
@@ -51,6 +53,7 @@ export default function SignIn() {
       },
     })
       .then((res) => {
+        setIsLoading(false);
         let usuario = res.data;
         let imobiliaria = res.data.idImobiliaria;
         localStorage.setItem("@App:user", JSON.stringify(usuario));
@@ -64,6 +67,7 @@ export default function SignIn() {
         }, 1500);
       })
       .catch((erro) => {
+        setIsLoading(false);
         setToastType('error');
         setToast(true)
       });
@@ -95,6 +99,13 @@ export default function SignIn() {
   return (
     <div className="fundo-background">
       <ThemeProvider theme={theme}>
+          <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1301 }}
+          open={isLoading}
+          >
+            <CircularProgress color="inherit" />
+          {/* <RiLoader4Line/> */}
+          </Backdrop>
         {toastType === 'error' &&
         <Snackbar
           open={toast}

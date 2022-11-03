@@ -18,6 +18,29 @@ button.MuiButton-root:hover {
   transition: .2s linear;
 }
 
+.grid-button button.MuiButton-root {
+  background-color: #4E0F1E;
+  margin: 0px;
+  height: 30px;
+  border-right: 1px solid #d99e0a;
+  font-size: 12px;
+  border-radius: 0px;
+  color: #e2e2e2;
+  transition: .2s linear;
+}
+
+.grid-button {
+  padding: 10px !important;
+}
+
+.grid-button button.MuiButton-root:first-child {
+  border-radius:10px 0px 0px 10px;
+}
+
+.grid-button button.MuiButton-root:last-child {
+  border-radius:0px 10px 10px 0px !important;
+}
+
 .fundo-background {
   width: 100vw;
   height: 100vh;
@@ -159,11 +182,34 @@ background-color: #e1a409;
 }
 }
 .dz-image {
-  border: 1px solid #666;
+  border: 1px solid #ebebeb;
   padding: 0px !important;
   border-radius: 10px;
   width: 100%; 
 }
 .dz-image p {
  text-align: center;
+}
+
+.dz-image-edit {
+  border: 1px solid #ebebeb;
+  cursor: pointer;
+  padding: 0px !important;
+  border-radius: 10px;
+  width: 100%; 
+  height:50px;
+  display: inline-flex;
+  vertical-align: middle;
+}
+.dz-image-edit button {
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 10px;
+  line-height: 50px;
+  float: left;
+}
+.dz-image-edit span {
+ text-align: center;
+ vertical-align: middle;
+ line-height: 50px;
 }

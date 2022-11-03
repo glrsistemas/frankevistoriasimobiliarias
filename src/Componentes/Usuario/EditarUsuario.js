@@ -8,22 +8,26 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { SiOpenstreetmap } from "react-icons/si";
 import { FaUserLock } from "react-icons/fa";
 import Navbar from "../Navbar";
-import { AiOutlineClose } from "react-icons/ai";
+import { AiFillCamera, AiOutlineClose } from "react-icons/ai";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import {Typography,Grid,Box,TextField,MenuItem,FormControl,Select,InputLabel,Switch,FormLabel,FormControlLabel,FormGroup} from "@mui/material";
+import {Typography,Grid,Box,TextField,MenuItem,FormControl,Select,InputLabel,Switch,FormLabel,FormControlLabel,FormGroup, Backdrop, CircularProgress, IconButton, Avatar} from "@mui/material";
 import Axios from "axios";
 import useContextApi from "../Context";
 import {useDropzone} from 'react-dropzone';
 import avatarDefault from "../../assets/default/avatar.jpg";
 import utils from "../../utils";
+import { GiFingerPrint } from "react-icons/gi";
 
 
-const thumbsContainer = {
+const thumbsContainerEdit = {
   display: 'flex',
   flexDirection: 'row',
   flexWrap: 'wrap',
+  textAlign: 'center',
+  justifyContent: 'center',
   marginTop: 10
 };
+
 
 const thumb = {
   display: 'inline-flex',
@@ -48,16 +52,15 @@ const thumbInner = {
 
 const img = {
   display: 'block',
+  zIndex: 1
 };
 
 export default function EditarUsuario(props) {
 
   let Dados = props ? props : '';
   let idUsuario = props.idUsuario ? props.idUsuario : "";
-  const { user } = useContextApi();
+  const { user, isLoading, setIsLoading } = useContextApi();
   const [cepForm, setCepForm] = React.useState([]);
-  const [userById, setUserById] = React.useState([]);
-  const [todasImob, setTodasImob] = useState([]);
   let [listPerfil, setListPerfil] = useState([]);
 
   const [nome, setNome] = useState("");
@@ -67,7 +70,6 @@ export default function EditarUsuario(props) {
   const [ativo, setAtivo] = useState(true);
   const [perfilUsuario, setPerfilUsuario] = useState([]);
   const [cpf, setCpf] = useState("");
-  const [perfilUsuarioSelecionado, setPerfilUsuarioSelecionado] = useState("");
   const [celular, setCelular] = useState("");
   const [email, setEmail] = useState("");
   const [login, setLogin] = useState("");
@@ -81,6 +83,8 @@ export default function EditarUsuario(props) {
   const [estado, setEstado] = useState("");
   const [avatar, setAvatar] = useState(""); 
   const [files, setFiles] = useState([]); 
+  const [idEndereco, setIdEndereco] = useState(null);
+  const [idImobiliaria, setIdImobiliaria] = useState(null);
   const {getRootProps, getInputProps} = useDropzone({
     accept: {
       'image/*': []
@@ -93,48 +97,8 @@ export default function EditarUsuario(props) {
   });
 
   const buscaUserById = () => {
-    Axios.get(utils.getBaseUrl()+"usuario/findById/"+idUsuario).then((res) => {
-      let dados = res.data;
 
-      setNome(dados.nome);
-      setSobrenome(dados.sobrenome);
-      setImobiliaria(dados.idImobiliaria);
-      setAtivo(dados.ativo);
-      setCpf(dados.cpf);
-      setCelular(dados.celular);
-      setEmail(dados.email);
-      setLogin(dados.login);
-      setSenha(dados.senha);
-      setCepForm(dados.idEndereco);
-      setAvatar(dados.uri);
-      setPerfilUsuario(dados.idPerfilUsuario.id);
-
-      console.log(dados.idImobiliaria.id)
-
-    }).catch((err) => {
-      console.log("Erro ao buscar Usuário");
-    });
-  }
-  
-  const thumbs = files.map(file => (
-    <div style={thumb} key={file.name ? file.name : avatarDefault}>
-      <div style={thumbInner}>
-        <img
-          src={file.preview ? file.preview : (avatar ? avatar : avatarDefault)}
-          style={img}
-          // Revoke data uri after image is loaded
-          onLoad={() => { URL.revokeObjectURL(file.preview ? file.preview : avatarDefault) }}
-        />
-      </div>
-    </div>
-  ));
-
-  useEffect(() => {
-    // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
-    return () => files.forEach(file => URL.revokeObjectURL(file.preview));
-  }, []);
-
-  useEffect(() => {
+    setIsLoading(true);
     let listaPerfil = [];
 
     Axios.get(utils.getBaseUrl()+"perfilUsuario/findAll")
@@ -145,7 +109,58 @@ export default function EditarUsuario(props) {
       .catch((err) => {
         console.log(err);
       });
-  }, listPerfil);
+
+    Axios.get(utils.getBaseUrl()+"usuario/findById/"+idUsuario).then((res) => {
+      let dados = res.data;
+      setIsLoading(false);
+      setNome(dados.nome);
+      setSobrenome(dados.sobrenome);
+      setImobiliaria(dados.idImobiliaria);
+      setAtivo(dados.ativo);
+      setCpf(dados.cpf);
+      setAdmin(dados.administrativo);
+      setCelular(dados.celular);
+      setEmail(dados.email);
+      setLogin(dados.login);
+      setSenha(dados.senha);
+      setCep(dados.idEndereco.cep);
+      setNumero(dados.idEndereco.numero);
+      setCidade(dados.idEndereco.cidade);
+      setEstado(dados.idEndereco.estado);
+      setBairro(dados.idEndereco.bairro);
+      setComplemento(dados.idEndereco.complemento);
+      setLogradouro(dados.idEndereco.logradouro);
+      setAvatar(dados.uri);
+      setPerfilUsuario(dados.idPerfilUsuario.id);
+      setIdEndereco(dados.idEndereco.id);
+      setIdImobiliaria(dados.idImobiliaria.id);
+
+      files[0].preview = dados.uri;
+
+      console.log(dados.idImobiliaria.id)
+    }).catch((err) => {
+      console.log("Erro ao buscar Usuário");
+      setIsLoading(false);
+    });
+  }
+  let thumbs = files.map(file => (
+    <div style={thumb} key={file.name ? file.name : avatarDefault}>
+      <div style={thumbInner}>
+        <img
+          src={file.preview ? file.preview :  avatarDefault}
+          style={img}
+          // Revoke data uri after image is loaded
+          onLoad={() => { URL.revokeObjectURL(file.preview ? file.preview : avatarDefault) }}
+        />
+      </div>
+    </div>
+      ));
+
+
+  useEffect(() => {
+    // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
+    return () => files.forEach(file => URL.revokeObjectURL(file.preview));
+  }, []);
 
   const [open, setOpen] = React.useState(false);
 
@@ -160,6 +175,41 @@ export default function EditarUsuario(props) {
   };
 
   const handleUpdate = () => {
+    
+    try {
+      Axios.put(utils.getBaseUrl()+"endereco/update", {
+        id: idEndereco,
+        cep: cep,
+        bairro: bairro,
+        logradouro: logradouro,
+        cidade: cidade,
+        numero: numero,
+        complemento: complemento,
+        estado: estado
+      }).then((end) => {
+        Axios.put(utils.getBaseUrl()+"usuario/update", {
+              nome: nome,
+              sobrenome: sobrenome,
+              imobiliariaEntity: idImobiliaria,
+              perfilUsuario: perfilUsuario,
+              ativo: ativo,
+              cpf: cpf,
+              email: email,
+              celular: celular,
+              login: login,
+              endereco: idEndereco,
+              administrativo: admin,
+              file: files[0]
+        }, { headers: {"Content-Type": "multipart/form-data"}}).then((data) => {
+        }).catch((err) => {
+          console.log(err);
+        });
+      }).catch((err) => {
+        console.log(err);
+      });
+    } catch (error) {
+      
+    }
 
   }
 
@@ -194,6 +244,13 @@ export default function EditarUsuario(props) {
   }, [open]);
   return (
     <div>
+       <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1301 }}
+          open={isLoading}
+          >
+            <CircularProgress color="inherit" />
+          {/* <RiLoader4Line/> */}
+          </Backdrop>
       <Button variant="contained" onClick={handleClickOpen} sx={{width: '100%'}}>
         Editar Usuário
       </Button>
@@ -240,12 +297,27 @@ export default function EditarUsuario(props) {
                     </Typography>
                   </Grid>
                   <Grid container spacing={2} sm={12} md={12} lg={12} xl={12}>
-                    <Grid item xs={12} sm={12} md={6} lg={4} xl={3} style={thumbsContainer}>
-                          <Box {...getRootProps({className: 'dropzone dz-image'})}>
+                    <Grid item xs={12} sm={12} md={6} lg={4} xl={3} style={thumbsContainerEdit}>
+                      {!utils.isEmpty(files[0]) && 
+                      thumbs
+                      }
+                      {utils.isEmpty(files[0]) && 
+                      <Avatar
+                      alt={nome + sobrenome}
+                      src={avatar ? avatar : avatarDefault}
+                      sx={{ width: "200px", height: "auto", padding: "10px" }}
+                      key={avatar}
+                    />
+                      }
+                      
+                      <Box  {...getRootProps({className: 'dropzone dz-image-edit'})}>                    
+                          <IconButton aria-label="fingerprint" sx={{color: '#f00'}}>
                             <input {...getInputProps()} />
-                            <p>Selecione ou arraste sua Imagem</p>
-                            {thumbs}
+                              <AiFillCamera />
+                            </IconButton>
+                            <span>Selecione ou Arraste sua Imagem ! </span>
                           </Box>
+                          
                     </Grid>
                     <Grid container spacing={2} xs={12} sm={12} md={6} lg={8} xl={9}>
                     <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
@@ -254,7 +326,6 @@ export default function EditarUsuario(props) {
                         label="Nome"
                         id="nome"
                         value={nome}
-                        defaultValue={nome}
                         onChange={(e) => {
                           setNome(e.target.value);
                         }}
@@ -269,7 +340,6 @@ export default function EditarUsuario(props) {
                         label="Sobrenome"
                         id="sobrenome"
                         value={sobrenome}
-                        defaultValue={sobrenome}
                         onChange={(e) => {
                           setSobrenome(e.target.value);
                         }}
@@ -284,7 +354,6 @@ export default function EditarUsuario(props) {
                         label="CPF"
                         id="cpf"
                         value={cpf}
-                        defaultValue={cpf}
                         onChange={(e) => {
                           setCpf(e.target.value);
                         }}
@@ -298,7 +367,6 @@ export default function EditarUsuario(props) {
                         label="Celular"
                         id="celular"
                         value={celular}
-                        defaultValue={celular}
                         onChange={(e) => {
                           setCelular(e.target.value);
                         }}
@@ -313,7 +381,6 @@ export default function EditarUsuario(props) {
                         id="imobiliaria"
                         type="imobiliaria"
                         value={imobiliaria.nomeFantasia}
-                        defaultValue={imobiliaria.nomeFantasia}
                         disabled
                         name="imobiliaria"
                         variant="outlined"
@@ -328,7 +395,6 @@ export default function EditarUsuario(props) {
                             labelId="label-select-perfil-usuario"
                             id="perfil_usuario"
                             value={perfilUsuario}
-                            defaultValue={perfilUsuario ? perfilUsuario : ""}
                             onChange={(e) => {
                               setPerfilUsuario(e.target.value);
                             }}
@@ -354,7 +420,6 @@ export default function EditarUsuario(props) {
                         }}
                         type="email"
                         value={email}
-                        defaultValue={email}
                         required
                         validate
                         name="email"
@@ -367,7 +432,6 @@ export default function EditarUsuario(props) {
                         fullWidth
                         id="login"
                         value={login}
-                        defaultValue={login}
                         onChange={(e) => {
                           setLogin(e.target.value);
                         }}
@@ -386,8 +450,7 @@ export default function EditarUsuario(props) {
                         }}
                         required
                         name="senha"
-                        value={senha}
-                        defaultValue={senha}
+                        value="123456789@123"
                         type="password"
                         variant="outlined"
                       />
@@ -446,11 +509,13 @@ export default function EditarUsuario(props) {
                         id="cep"
                         required
                         name="cep"
-                        defaultValue={cepForm.cep ? cepForm.cep : ""}
-                        value={cepForm.cep}
+                        value={cep}
+                        onChange={(e) => {
+                          setCep(e.target.value);
+                        }}
                         type="text"
                         variant="outlined"
-                        onChange={(e) => buscaCep(e)}
+                        //onChange={(e) => buscaCep(e)}
                       />
                     </Grid>
                     <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
@@ -463,8 +528,7 @@ export default function EditarUsuario(props) {
                         onChange={(e) => {
                           setLogradouro(e.target.value);
                         }}
-                        defaultValue={cepForm.logradouro}
-                        value={cepForm.logradouro}
+                        value={logradouro}
                         variant="outlined"
                       />
                     </Grid>
@@ -478,7 +542,7 @@ export default function EditarUsuario(props) {
                         id="numero"
                         required
                         name="numero"
-                        defaultValue={cepForm.numero ? cepForm.numero : ""}
+                        value={numero}
                         variant="outlined"
                       />
                     </Grid>
@@ -491,7 +555,7 @@ export default function EditarUsuario(props) {
                         onChange={(e) => {
                           setComplemento(e.target.value);
                         }}
-                        defaultValue={cepForm.complemento ? cepForm.complemento : ""}
+                        value={complemento}
                         variant="outlined"
                       />
                     </Grid>
@@ -502,8 +566,10 @@ export default function EditarUsuario(props) {
                         id="bairro"
                         required
                         name="bairro"
-                        defaultValue={cepForm.bairro ? cepForm.bairro : ""}
-                        value={cepForm.bairro}
+                        value={bairro}
+                        onChange={(e) => {
+                          setBairro(e.target.value);
+                        }}
                         variant="outlined"
                       />
                     </Grid>
@@ -514,8 +580,10 @@ export default function EditarUsuario(props) {
                         id="cidade"
                         required
                         name="cidade"
-                        defaultValue={cepForm.cidade ? cepForm.cidade : ""}
-                        value={cepForm.localidade}
+                        onChange={(e) => {
+                          setCidade(e.target.value);
+                        }}
+                        value={cidade}
                         variant="outlined"
                       />
                     </Grid>
@@ -526,8 +594,10 @@ export default function EditarUsuario(props) {
                         id="estado"
                         required
                         name="estado"
-                        defaultValue={cepForm.estado ? cepForm.estado : ""}
-                        value={cepForm.uf}
+                        onChange={(e) => {
+                          setEstado(e.target.value);
+                        }}
+                        value={estado}
                         variant="outlined"
                       />
                     </Grid>

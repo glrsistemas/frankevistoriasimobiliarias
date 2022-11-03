@@ -1,9 +1,3 @@
-import {Alert, Snackbar, AlertTitle} from "@mui/material";
-
-function open(ev){
-    return ev;
-}
-
 let utils = {
   clearUserData: function () {
     localStorage.removeItem("user");
@@ -111,25 +105,6 @@ dateToString: function (v, format) {
         return v.getDateString(format);
     }
     return null;
-},
-response: function (title, msg,strong,type, color){
-
-return(<Snackbar
-          open={open(true)}
-          anchorOrigin={{ vertical:"top", horizontal:"center" }}
-          autoHideDuration={2000}
-          onClose={() => {
-            open(false);
-          }}
-        >
-          <Alert severity='type' variant="filled" onClose={() => {
-            open(false);
-          }}>
-            <AlertTitle>{title}</AlertTitle>
-                  {msg}
-            <strong>{strong ? strong : ''}</strong>
-          </Alert>
-        </Snackbar>)
 },
 toDate: function (v) {
     if (v != null) {

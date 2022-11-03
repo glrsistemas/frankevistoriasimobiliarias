@@ -59,7 +59,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
+  zIndex: theme.zIndex.drawer + 1301,
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -127,13 +127,13 @@ function Home() {
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
-        <DrawerHeader  sx={{ minHeight: '160px'}}>
+        <DrawerHeader  sx={{ height: '200px' }}>
           <Grid container spacing={2} sm={10} className="header-sidebar">
             <Grid >
           <Avatar  src={user.uri ? user.uri : ''} className={"header-avatar"}/>
             </Grid>
-          <Grid>
-          <Typography className="header-name">
+          <Grid sx={{width: '100%'}}>
+          <Typography className="header-name" >
           {user.nome + " " + user.sobrenome}  
           </Typography>
           <Divider className="divider-header-marsalla"/>

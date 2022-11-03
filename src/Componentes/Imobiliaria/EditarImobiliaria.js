@@ -10,7 +10,7 @@ import { FaUserLock } from "react-icons/fa";
 import Navbar from "../Navbar";
 import { AiOutlineClose } from "react-icons/ai";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import {Typography,Grid,Box,TextField,MenuItem,FormControl,Select,InputLabel,Switch,FormLabel,FormControlLabel,FormGroup} from "@mui/material";
+import {Typography,Grid,Box,TextField,MenuItem,FormControl,Select,InputLabel,Switch,FormLabel,FormControlLabel,FormGroup, Backdrop, CircularProgress} from "@mui/material";
 import Axios from "axios";
 import useContextApi from "../Context";
 import {useDropzone} from 'react-dropzone';
@@ -57,7 +57,7 @@ export default function EditarImobiliaria(props) {
   let Dados = props ? props : '';
   let idImob = props.idImob ? props.idImob : "";
   const [imobById, setImobById] = React.useState([]);
-  const { user, imobiliariaUsuario } = useContextApi();
+  const { user, imobiliariaUsuario, isLoading, setIsLoading} = useContextApi();
   const [openCrudImobiliaria, setOpenCrudImobiliaria] = React.useState(false);
   const [scroll, setScroll] = React.useState("paper");
   const [cepForm, setCepForm] = React.useState([]);
@@ -93,9 +93,10 @@ export default function EditarImobiliaria(props) {
   const [uri, setUri] = useState("");
 
   const buscaImobById = () => {
+    setIsLoading(true);
     Axios.get(utils.getBaseUrl()+"imobiliaria/findById/"+idImob).then((res) => {
       let dados = res.data;
-
+      setIsLoading(false);
       setNomeFantasia(dados.nomeFantasia);
       setRazaoSocial(dados.razaoSocial);
       setAtivo(dados.ativo);
@@ -114,10 +115,12 @@ export default function EditarImobiliaria(props) {
 
     }).catch((err) => {
       console.log("Erro ao buscar Usuário");
+      setIsLoading(false);
     });
   }
 
   function handleSubmit () {
+    setIsLoading(true);
     Axios.put(utils.getBaseUrl()+"endereco/update", {
       id: idEndereco,
       cep: cep,
@@ -129,6 +132,7 @@ export default function EditarImobiliaria(props) {
       estado: estado,
     })
       .then((end) => {
+        setIsLoading(false);
         if (end.data) {
           Axios.put(
             utils.getBaseUrl()+"imobiliaria/update",
@@ -156,6 +160,7 @@ export default function EditarImobiliaria(props) {
         }
       })
       .catch((err) => {
+        setIsLoading(false);
         console.log(err);
       });
   }
@@ -223,6 +228,13 @@ export default function EditarImobiliaria(props) {
   }, [open]);
   return (
     <div>
+      <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1301 }}
+          open={isLoading}
+          >
+            <CircularProgress color="inherit" />
+          {/* <RiLoader4Line/> */}
+          </Backdrop>
       <Button variant="contained" onClick={handleClickOpen} sx={{width: '100%'}}>
         Editar Imobiliaria
       </Button>
@@ -263,7 +275,7 @@ export default function EditarImobiliaria(props) {
                   </Grid>
                   <Grid mt={1} container spacing={2} sm={12} md={12} lg={12} xl={12}>
                   <Grid item xs={12} sm={12} md={6} lg={4} xl={3} style={thumbsContainer}>
-                          <Box {...getRootProps({className: 'dropzone dz-image'})}>
+                          <Box {...getRootProps({className: 'dropzone dz-image-edit'})}>
                             <input {...getInputProps()} />
                             <p>Selecione ou arraste sua Imagem</p>
                             {uri !== "" ? <img src={uri} alt={uri} style={img}/> : thumbs}

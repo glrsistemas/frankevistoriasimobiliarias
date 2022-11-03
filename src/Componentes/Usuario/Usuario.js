@@ -29,6 +29,8 @@ import {
   FormControlLabel,
   FormGroup,
   useRadioGroup,
+  Backdrop,
+  CircularProgress,
 } from "@mui/material";
 import Axios from "axios";
 import useContextApi from "../Context";
@@ -72,7 +74,7 @@ const img = {
 
 
 export default function Usuario() {
-  const { user, imobiliariaUsuario } = useContextApi();
+  const { user, imobiliariaUsuario, isLoading, setIsLoading  } = useContextApi();
   const [openCrudUsuario, setOpenCrudUsuario] = React.useState(false);
   const [scroll, setScroll] = React.useState("paper");
   const [cepForm, setCepForm] = React.useState([]);
@@ -118,39 +120,46 @@ export default function Usuario() {
   let dev = true;
 
   useEffect(() => {
+    setIsLoading(true);
       Axios.get(utils.getBaseUrl()+"imobiliaria/findAll")
         .then((res) => {
           setTodasImob(res.data);
+          setIsLoading(false);
         })
         .catch((err) => {
           console.log(err);
+          setIsLoading(false);
         });
   }, todasImob);
 
   useEffect(() => {
     let listaUsuario = [];
-
+    setIsLoading(true);
     Axios.get(utils.getBaseUrl()+"usuario/findAll")
       .then((res) => {
         listaUsuario = res.data;
         setListUsuario(listaUsuario);
+        setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
+        setIsLoading(false);
       });
   }, listUsuario);
 
 
   useEffect(() => {
     let listaPerfil = [];
-
+    setIsLoading(true);
     Axios.get(utils.getBaseUrl()+"perfilUsuario/findAll")
       .then((res) => {
         listaPerfil = res.data;
         setListPerfil(listaPerfil);
+        setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
+        setIsLoading(false);
       });
   }, listPerfil);
 
@@ -293,6 +302,13 @@ export default function Usuario() {
 
   return (
     <>
+    <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1301 }}
+          open={isLoading}
+          >
+            <CircularProgress color="inherit" />
+          {/* <RiLoader4Line/> */}
+          </Backdrop>
       <Navbar />
       {openCrudUsuario && (
         <div>

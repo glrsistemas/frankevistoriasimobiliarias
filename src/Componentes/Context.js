@@ -21,9 +21,10 @@ export const ContextProvider = (props) => {
   let [imobiliaria, setImobiliaria] = useState([]);
   let [imobiliariaUsuario, setImobiliariaUsuario] = useState([]);
   let [atendimento, setAtendimento] = useState([]);
+  let [isLoading, setIsLoading] = React.useState(false);
 
   return (
-    <Context.Provider value={{ user, setUser, atendimento, setAtendimento, imobiliaria, setImobiliaria, setImobiliariaUsuario, imobiliariaUsuario}}>
+    <Context.Provider value={{ user, setUser, atendimento, setAtendimento, imobiliaria, setImobiliaria, setImobiliariaUsuario, imobiliariaUsuario, setIsLoading, isLoading}}>
       {props.children}
     </Context.Provider>
   );
