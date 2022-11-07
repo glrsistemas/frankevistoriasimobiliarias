@@ -226,6 +226,7 @@ export default function Usuario() {
                 console.log("Sucesso ao criar !");
                 utils.response("Sucesso ao Criar !", "O usuário foi inserido com sucesso.", null, "success", "green");
                 setOpenCrudUsuario(false);
+                window.reload();
                         }).catch((err) => {
                           console.log(err);
                         })

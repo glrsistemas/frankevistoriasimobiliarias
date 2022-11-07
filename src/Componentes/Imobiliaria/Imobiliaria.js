@@ -15,6 +15,7 @@ import utils from "../../utils";
 import { SiOpenstreetmap } from "react-icons/si";
 import { GiModernCity } from "react-icons/gi";
 import thumbDefault from "../../assets/default/default.jpg";
+import EditImobiliaria from "./EditarImobiliaria";
 import { useDropzone } from "react-dropzone";
 
 
@@ -548,8 +549,7 @@ export default function Imobiliaria() {
                     <Grid className="linha-dados"> <span className="dados-imobiliaria">Data de Criação:</span>{utils.dataFormatada(imob.dhRegistro)}</Grid>
                   </Grid>
                   <Grid  mt={2} item sx={{fontSize: "12px"}}>
-                 <Button variant="contained"
-              sx={{width: "100%"}}>Editar</Button>
+                 <EditImobiliaria idImob={imob.id} />
                   </Grid>
                 </Grid>
               </CardContent>

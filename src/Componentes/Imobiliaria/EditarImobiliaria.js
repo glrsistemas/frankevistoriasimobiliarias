@@ -8,9 +8,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { SiOpenstreetmap } from "react-icons/si";
 import { FaUserLock } from "react-icons/fa";
 import Navbar from "../Navbar";
-import { AiOutlineClose } from "react-icons/ai";
+import { AiFillCamera, AiOutlineClose } from "react-icons/ai";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import {Typography,Grid,Box,TextField,MenuItem,FormControl,Select,InputLabel,Switch,FormLabel,FormControlLabel,FormGroup, Backdrop, CircularProgress} from "@mui/material";
+import {Typography,Grid,Box,TextField,MenuItem,FormControl,Select,InputLabel,Switch,FormLabel,FormControlLabel,FormGroup, Backdrop, CircularProgress, Avatar, IconButton} from "@mui/material";
 import Axios from "axios";
 import useContextApi from "../Context";
 import {useDropzone} from 'react-dropzone';
@@ -18,11 +18,13 @@ import avatarDefault from "../../assets/default/avatar.jpg";
 import utils from "../../utils";
 import { GiModernCity } from "react-icons/gi";
 
-const thumbsContainer = {
+const thumbsContainerEdit = {
   display: 'flex',
   flexDirection: 'row',
   flexWrap: 'wrap',
-  padding: '0px 25px'
+  textAlign: 'center',
+  justifyContent: 'center',
+  marginTop: 10
 };
 
 
@@ -49,6 +51,7 @@ const thumbInner = {
 
 const img = {
   display: 'block',
+  zIndex: 1
 };
 
 
@@ -58,7 +61,6 @@ export default function EditarImobiliaria(props) {
   let idImob = props.idImob ? props.idImob : "";
   const [imobById, setImobById] = React.useState([]);
   const { user, imobiliariaUsuario, isLoading, setIsLoading} = useContextApi();
-  const [openCrudImobiliaria, setOpenCrudImobiliaria] = React.useState(false);
   const [scroll, setScroll] = React.useState("paper");
   const [cepForm, setCepForm] = React.useState([]);
   const {getRootProps, getInputProps} = useDropzone({
@@ -119,7 +121,7 @@ export default function EditarImobiliaria(props) {
     });
   }
 
-  function handleSubmit () {
+  function handleUpdate () {
     setIsLoading(true);
     Axios.put(utils.getBaseUrl()+"endereco/update", {
       id: idEndereco,
@@ -137,18 +139,18 @@ export default function EditarImobiliaria(props) {
           Axios.put(
             utils.getBaseUrl()+"imobiliaria/update",
             {
+                id: idImob,
                 nomeFantasia: nomeFantasia,
                 razaoSocial: razaoSocial,
                 ativo: ativo,
                 cnpj: cnpj,
                 celular: celular,
                 email: email,
+                file: files[0]
             },
             {   headers: {
-                "Content-Type": "multipart/form-data",
-                  params: {
-                    "file": files[0]}  
-                },      
+                "Content-Type": "multipart/form-data"
+            }
             },
           )
             .then((usuario) => {
@@ -195,8 +197,6 @@ export default function EditarImobiliaria(props) {
     setOpen(false);
   };
 
-  const handleUpdate = () => {}
-
   const handleChange = (e) => {
     let buscaCep = e.target.value;
 
@@ -209,7 +209,6 @@ export default function EditarImobiliaria(props) {
           setLogradouro(dado.logradouro);
           setCidade(dado.localidade);
           setEstado(dado.uf);
-          setCepForm(dado);
         })
         .catch((err) => {
           console.log(err.message);
@@ -226,6 +225,8 @@ export default function EditarImobiliaria(props) {
       }
     }
   }, [open]);
+
+
   return (
     <div>
       <Backdrop
@@ -233,7 +234,6 @@ export default function EditarImobiliaria(props) {
           open={isLoading}
           >
             <CircularProgress color="inherit" />
-          {/* <RiLoader4Line/> */}
           </Backdrop>
       <Button variant="contained" onClick={handleClickOpen} sx={{width: '100%'}}>
         Editar Imobiliaria
@@ -274,11 +274,25 @@ export default function EditarImobiliaria(props) {
                     </Typography>
                   </Grid>
                   <Grid mt={1} container spacing={2} sm={12} md={12} lg={12} xl={12}>
-                  <Grid item xs={12} sm={12} md={6} lg={4} xl={3} style={thumbsContainer}>
-                          <Box {...getRootProps({className: 'dropzone dz-image-edit'})}>
+                  <Grid item xs={12} sm={12} md={6} lg={4} xl={3} style={thumbsContainerEdit}>
+                      {!utils.isEmpty(files[0]) && 
+                      thumbs
+                      }
+                      {utils.isEmpty(files[0]) && 
+                      <Avatar
+                      alt={nomeFantasia}
+                      src={uri ? uri : avatarDefault}
+                      sx={{ width: "200px", height: "auto", padding: "10px" }}
+                      key={uri}
+                    />
+                      }
+                      
+                      <Box  {...getRootProps({className: 'dropzone dz-image-edit'})}>                    
+                          <IconButton aria-label="fingerprint" sx={{color: '#f00'}}>
                             <input {...getInputProps()} />
-                            <p>Selecione ou arraste sua Imagem</p>
-                            {uri !== "" ? <img src={uri} alt={uri} style={img}/> : thumbs}
+                              <AiFillCamera />
+                            </IconButton>
+                            <span>Selecione ou Arraste sua Imagem ! </span>
                           </Box>
                     </Grid>
                     <Grid container spacing={2} xs={12} sm={12} md={6} lg={8} xl={9}>
@@ -288,7 +302,6 @@ export default function EditarImobiliaria(props) {
                         label="Nome Fantasia"
                         id="nomeFantasia"
                         value={nomeFantasia}
-                        defaultValue={nomeFantasia}
                         onChange={(e) => {
                           setNomeFantasia(e.target.value);
                         }}
@@ -303,7 +316,6 @@ export default function EditarImobiliaria(props) {
                         label="Razão Social"
                         id="razaoSocial"
                         value={razaoSocial}
-                        defaultValue={razaoSocial}
                         onChange={(e) => {
                           setRazaoSocial(e.target.value);
                         }}
@@ -319,7 +331,6 @@ export default function EditarImobiliaria(props) {
                         id="cnpj"
                         value={cnpj}
                         required
-                        defaultValue={cnpj}
                         onChange={(e) => {
                           setCnpj(e.target.value);
                         }}
@@ -333,7 +344,6 @@ export default function EditarImobiliaria(props) {
                         label="Celular"
                         id="celular"
                         value={celular}
-                        defaultValue={celular}
                         onChange={(e) => {
                           setCelular(e.target.value);
                         }}
@@ -351,7 +361,6 @@ export default function EditarImobiliaria(props) {
                         }}
                         type="email"
                         value={email}
-                        defaultValue={email}
                         required
                         validate
                         name="email"
@@ -405,18 +414,20 @@ export default function EditarImobiliaria(props) {
                     </Typography>
                   </Grid>
                   <Grid mt={1}container spacing={2} sm={12} md={12} lg={12} xl={12}>
-                    <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                  <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
                       <TextField
                         fullWidth
                         label="CEP"
                         id="cep"
                         required
                         name="cep"
-                        defaultValue={cepForm.cep}
-                        value={cepForm.cep}
+                        value={cep}
+                        onChange={(e) => {
+                          setCep(e.target.value);
+                        }}
                         type="text"
                         variant="outlined"
-                        onChange={(e) => handleChange(e)}
+                        // onChange={(e) => handleChange(e)}
                       />
                     </Grid>
                     <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
@@ -426,8 +437,10 @@ export default function EditarImobiliaria(props) {
                         id="logradouro"
                         required
                         name="logradouro"
-                        defaultValue={cepForm.logradouro}
-                        value={cepForm.logradouro}
+                        onChange={(e) => {
+                          setLogradouro(e.target.value);
+                        }}
+                        value={logradouro}
                         variant="outlined"
                       />
                     </Grid>
@@ -441,8 +454,7 @@ export default function EditarImobiliaria(props) {
                         id="numero"
                         required
                         name="numero"
-                        defaultValue={utils.nvl(numero,cepForm.numero)}
-                        value={utils.nvl(numero,cepForm.numero)}
+                        value={numero}
                         variant="outlined"
                       />
                     </Grid>
@@ -455,8 +467,7 @@ export default function EditarImobiliaria(props) {
                         onChange={(e) => {
                           setComplemento(e.target.value);
                         }}
-                        defaultValue={utils.nvl(cepForm.complemento,cepForm.complemento)}
-                        value={utils.nvl(cepForm.complemento,cepForm.complemento)}
+                        value={complemento}
                         variant="outlined"
                       />
                     </Grid>
@@ -467,8 +478,10 @@ export default function EditarImobiliaria(props) {
                         id="bairro"
                         required
                         name="bairro"
-                        defaultValue={cepForm.bairro}
-                        value={cepForm.bairro}
+                        value={bairro}
+                        onChange={(e) => {
+                          setBairro(e.target.value);
+                        }}
                         variant="outlined"
                       />
                     </Grid>
@@ -479,8 +492,10 @@ export default function EditarImobiliaria(props) {
                         id="cidade"
                         required
                         name="cidade"
-                        defaultValue={utils.nvl(cepForm.localidade,cepForm.cidade)}
-                        value={utils.nvl(cepForm.localidade,cepForm.cidade)}
+                        onChange={(e) => {
+                          setCidade(e.target.value);
+                        }}
+                        value={cidade}
                         variant="outlined"
                       />
                     </Grid>
@@ -491,8 +506,10 @@ export default function EditarImobiliaria(props) {
                         id="estado"
                         required
                         name="estado"
-                        defaultValue={utils.nvl(cepForm.uf,cepForm.estado)}
-                        value={utils.nvl(cepForm.uf,cepForm.estado)}
+                        onChange={(e) => {
+                          setEstado(e.target.value);
+                        }}
+                        value={estado}
                         variant="outlined"
                       />
                     </Grid>
@@ -501,7 +518,7 @@ export default function EditarImobiliaria(props) {
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={handleSubmit}>
+              <Button onClick={handleUpdate}>
                 Adicionar
               </Button>
             </DialogActions>

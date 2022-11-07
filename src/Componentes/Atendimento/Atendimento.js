@@ -3,6 +3,11 @@ import Box from "@mui/material/Box";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Navbar from "../Navbar/index";
 import { styled } from '@mui/material/styles';
+import { Backdrop, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, Switch, TextField, Typography } from "@mui/material";
+import { AiOutlineUserAdd } from "react-icons/ai";
+import Grid2 from "@mui/material/Unstable_Grid2";
+import { SiOpenstreetmap } from "react-icons/si";
+import { FaUserLock } from "react-icons/fa";
 
 const columns = [
   { field: "id", headerName: "Código"},
@@ -21,18 +26,23 @@ const columns = [
     headerName: "Contestação",
     filterable: false,
   },
+  {
+    field: "editar",
+    headerName: "Editar",
+    filterable: false,
+  },
 ];
 
 const rows = [
-  { id: 1, descricao: "Snow", imovel: "Jon", contestacao: "Sim" },
-  { id: 2, descricao: "Lannister", imovel: "Cersei", contestacao: "Não" },
-  { id: 3, descricao: "Lannister", imovel: "Jaime", contestacao: "Sim" },
-  { id: 4, descricao: "Stark", imovel: "Arya", contestacao: "Não" },
-  { id: 5, descricao: "Targaryen", imovel: "Daenerys", contestacao: "Sim" },
-  { id: 6, descricao: "Melisandre", imovel: null, contestacao: "Sim" },
-  { id: 7, descricao: "Clifford", imovel: "Ferrara", contestacao: "Não" },
-  { id: 8, descricao: "Frances", imovel: "Rossini", contestacao: "Não" },
-  { id: 9, descricao: "Roxie", imovel: "Harvey", contestacao: "Sim" },
+  { id: 1, descricao: "Snow", imovel: "Jon", contestacao: "Sim", editar: <Button>Editar</Button> },
+  { id: 2, descricao: "Lannister", imovel: "Cersei", contestacao: "Não", editar: <Button>Editar</Button>  },
+  { id: 3, descricao: "Lannister", imovel: "Jaime", contestacao: "Sim", editar: <Button>Editar</Button>  },
+  { id: 4, descricao: "Stark", imovel: "Arya", contestacao: "Não", editar: <Button>Editar</Button>  },
+  { id: 5, descricao: "Targaryen", imovel: "Daenerys", contestacao: "Sim", editar: <Button>Editar</Button>  },
+  { id: 6, descricao: "Melisandre", imovel: null, contestacao: "Sim", editar: <Button>Editar</Button>  },
+  { id: 7, descricao: "Clifford", imovel: "Ferrara", contestacao: "Não", editar: <Button>Editar</Button>  },
+  { id: 8, descricao: "Frances", imovel: "Rossini", contestacao: "Não", editar: <Button>Editar</Button>  },
+  { id: 9, descricao: "Roxie", imovel: "Harvey", contestacao: "Sim", editar: <Button>Editar</Button>  },
 ];
 
 const StyledGridOverlay = styled('div')(({ theme }) => ({
@@ -106,14 +116,335 @@ function CustomNoRowsOverlay() {
   );
 }
 
+const handleSubmit = () => {}
+
 export default function DataGridDemo() {
   const [tamanhoPagina, setTamanhoPagina] = useState(5);
+  const [openCrudAtendimento, setOpenCrudAtendimento] = useState(false);
+  const [scroll, setScroll] = useState("paper");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleClickOpen = () => () => {
+    setOpenCrudAtendimento(true);
+  };
+
+  const handleClose = () => {
+    setOpenCrudAtendimento(false);
+  };
+
+  
+  const descriptionElementRef = React.useRef(null);
+  React.useEffect(() => {
+    if (openCrudAtendimento) {
+      const { current: descriptionElement } = descriptionElementRef;
+      if (descriptionElement !== null) {
+        descriptionElement.focus();
+      }
+    }
+  }, [openCrudAtendimento]);
+
 
   return (
     <>
+     <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1301 }}
+          open={isLoading}
+          >
+            <CircularProgress color="inherit" />
+          {/* <RiLoader4Line/> */}
+          </Backdrop>
       <Navbar />
+      {openCrudAtendimento && (
+        <div>
+          <Dialog
+            open={openCrudAtendimento}
+            onClose={handleClose}
+            fullScreen={true}
+            fullWidth={true}
+            scroll={scroll}
+            aria-labelledby="scroll-dialog-title"
+            aria-describedby="scroll-dialog-description"
+            className="dialog-container"
+          >
+            <Box
+              component="form"
+              sx={{
+                "& .MuiTextField-root": { m: 1 },
+              }}
+              autoComplete="new-password"
+            >
+              <DialogTitle id="scroll-dialog-title">
+                Cadastro de usuário
+              </DialogTitle>
+              <DialogContent dividers={scroll === "paper"}>
+                <DialogContentText
+                  id="scroll-dialog-description"
+                  ref={descriptionElementRef}
+                  tabIndex={-1}
+                >
+                  <Grid
+                    container
+                    spacing={0}
+                    xs={12}
+                    sm={12}
+                    md={12}
+                    lg={12}
+                    xl={12}
+                  >
+                    <Typography variant="h6" gutterBottom component="div">
+                      <span className="icon-form-default">
+                        <FaUserLock />
+                      </span>{" "}
+                      Dados Pessoais!
+                    </Typography>
+                  </Grid>
+                  <Grid container spacing={2} sm={12} md={12} lg={12} xl={12}>
+                    <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                      <TextField
+                        fullWidth
+                        label="Nome"
+                        id="nome"
+                        required
+                        name="nome"
+                        variant="outlined"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                      <TextField
+                        fullWidth
+                        label="Sobrenome"
+                        id="sobrenome"
+                        required
+                        name="sobrenome"
+                        variant="outlined"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                      <TextField
+                        fullWidth
+                        label="CPF"
+                        id="cpf"
+                        name="cpf"
+                        variant="outlined"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                      <TextField
+                        fullWidth
+                        label="Celular"
+                        id="celular"
+                        name="celular"
+                        variant="outlined"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                      <TextField
+                        label="E-mail"
+                        fullWidth
+                        id="email"
+                        type="email"
+                        required
+                        validate
+                        name="email"
+                        variant="outlined"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                      <TextField
+                        label="Login"
+                        fullWidth
+                        id="login"
+                        required
+                        name="login"
+                        variant="outlined"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                      <TextField
+                        fullWidth
+                        label="Senha:"
+                        id="senha"
+                        required
+                        name="senha"
+                        type="password"
+                        variant="outlined"
+                      />
+                    </Grid>
+                      <Grid item xs={12} sm={12} md={6} lg={2} xl={2}>
+                        <FormControl
+                          component="fieldset"
+                          sx={{ m: 1, textAlign: "center" }}
+                          fullWidth
+                        >
+                          <FormLabel component="legend">
+                            Usuário Ativo ?{" "}
+                          </FormLabel>
+                          <FormGroup sx={{ alignItems: "center" }}>
+                            <FormControlLabel
+                              control={
+                                <Switch
+                                  checked={true}
+                                  justifyContent="center"
+                                  inputProps={{ "aria-label": "Ativo" }}
+                                  name="ativo"
+                                />
+                              }
+                              label={"Ativo"}
+                            />
+                          </FormGroup>
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={12} sm={12} md={6} lg={2} xl={2}>
+                      <FormControl
+                        component="fieldset"
+                        sx={{ m: 1, textAlign: "center" }}
+                        fullWidth
+                      >
+                        <FormLabel component="legend">
+                          Admin ?
+                        </FormLabel>
+                        <FormGroup sx={{ alignItems: "center" }}>
+                          <FormControlLabel
+                            control={
+                              <Switch
+                                checked={true}
+                                justifyContent="center"
+                                inputProps={{ "aria-label": "Administrador" }}
+                                name="admin"
+                              />
+                            }
+                            label={"Sim"}
+                          />
+                        </FormGroup>
+                      </FormControl>
+                    </Grid>
+                  </Grid>
+                  <Grid
+                    container
+                    spacing={0}
+                    mt={2}
+                    xs={12}
+                    sm={12}
+                    md={12}
+                    lg={12}
+                    xl={12}
+                  >
+                    <Typography variant="h6" gutterBottom component="div">
+                      <span className="icon-form-default">
+                        <SiOpenstreetmap />
+                      </span>
+                      Endereço
+                    </Typography>
+                  </Grid>
+                  <Grid container spacing={2} sm={12} md={12} lg={12} xl={12}>
+                    <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                      <TextField
+                        fullWidth
+                        label="CEP"
+                        id="cep"
+                        required
+                        name="cep"
+                        type="text"
+                        variant="outlined"
+                        // onChange={(e) => handleChange(e)}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                      <TextField
+                        fullWidth
+                        label="Logradouro"
+                        id="logradouro"
+                        required
+                        name="logradouro"
+                        variant="outlined"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                      <TextField
+                        fullWidth
+                        label="Número"
+                        id="numero"
+                        required
+                        name="numero"
+                        variant="outlined"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                      <TextField
+                        fullWidth
+                        label="Complemento"
+                        id="complemento"
+                        name="complemento"
+                        variant="outlined"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                      <TextField
+                        fullWidth
+                        label="Bairro"
+                        id="bairro"
+                        required
+                        name="bairro"
+                        variant="outlined"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                      <TextField
+                        fullWidth
+                        label="Cidade"
+                        id="cidade"
+                        required
+                        name="cidade"
+                        variant="outlined"
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6} lg={4} xl={3}>
+                      <TextField
+                        fullWidth
+                        label="Estado"
+                        id="estado"
+                        required
+                        name="estado"
+                        variant="outlined"
+                      />
+                    </Grid>
+                  </Grid>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose}>Cancel</Button>
+                <Button
+                  onClick={() => {
+                    handleSubmit();
+                  }}
+                >
+                  Adicionar
+                </Button>
+              </DialogActions>
+            </Box>
+          </Dialog>
+        </div>
+      )}
+
       <div className="ui-container">
-        <Box sx={{ height: 400, width: "100%" }} mt={10}>
+      <Grid2 container className="ui-linha-superior-grid">
+          <Grid2 sm={6} md={8}>
+            <Typography variant="h6" gutterBottom component="div">
+              Atendimentos
+            </Typography>
+          </Grid2>
+          <Grid2 sm={6} md={4} sx={{ textAlign: "center" }}>
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: "#4E0F1E" }}
+              onClick={handleClickOpen()}
+            >
+              <AiOutlineUserAdd />
+            </Button>
+          </Grid2>
+        </Grid2>
+        
+        <Box sx={{ height: 400, width: "100%" }} mt={2}>
           <DataGrid 
              className="grid-button"
               components={{ Toolbar: GridToolbar, NoRowsOverlay : CustomNoRowsOverlay }}

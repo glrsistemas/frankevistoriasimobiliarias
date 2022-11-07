@@ -188,6 +188,7 @@ export default function EditarUsuario(props) {
         estado: estado
       }).then((end) => {
         Axios.put(utils.getBaseUrl()+"usuario/update", {
+              id: idUsuario,
               nome: nome,
               sobrenome: sobrenome,
               imobiliariaEntity: idImobiliaria,
@@ -198,8 +199,9 @@ export default function EditarUsuario(props) {
               celular: celular,
               login: login,
               endereco: idEndereco,
+              senha: senha,
               administrativo: admin,
-              file: files[0]
+              file:files[0],
         }, { headers: {"Content-Type": "multipart/form-data"}}).then((data) => {
         }).catch((err) => {
           console.log(err);
@@ -450,7 +452,7 @@ export default function EditarUsuario(props) {
                         }}
                         required
                         name="senha"
-                        value="123456789@123"
+                        value={senha}
                         type="password"
                         variant="outlined"
                       />
