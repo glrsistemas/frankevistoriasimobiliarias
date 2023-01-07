@@ -1,71 +1,122 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridToolbar } from "@mui/x-data-grid";
 import Navbar from "../Navbar/index";
-import { styled } from '@mui/material/styles';
-import { Backdrop, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, Switch, TextField, Typography } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import {
+  Backdrop,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+  Grid,
+  ImageList,
+  ImageListItem,
+  Switch,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { SiOpenstreetmap } from "react-icons/si";
 import { FaUserLock } from "react-icons/fa";
-
-const columns = [
-  { field: "id", headerName: "Código"},
-  {
-    field: "descricao",
-    headerName: "Descrição",
-    editable: false,
-  },
-  {
-    field: "imovel",
-    headerName: "Imóvel",
-    editable: false,
-  },
-  {
-    field: "contestacao",
-    headerName: "Contestação",
-    filterable: false,
-  },
-  {
-    field: "editar",
-    headerName: "Editar",
-    filterable: false,
-  },
-];
+import { TiCancel } from "react-icons/ti";
+import { MdModeEditOutline } from "react-icons/md";
 
 const rows = [
-  { id: 1, descricao: "Snow", imovel: "Jon", contestacao: "Sim", editar: <Button>Editar</Button> },
-  { id: 2, descricao: "Lannister", imovel: "Cersei", contestacao: "Não", editar: <Button>Editar</Button>  },
-  { id: 3, descricao: "Lannister", imovel: "Jaime", contestacao: "Sim", editar: <Button>Editar</Button>  },
-  { id: 4, descricao: "Stark", imovel: "Arya", contestacao: "Não", editar: <Button>Editar</Button>  },
-  { id: 5, descricao: "Targaryen", imovel: "Daenerys", contestacao: "Sim", editar: <Button>Editar</Button>  },
-  { id: 6, descricao: "Melisandre", imovel: null, contestacao: "Sim", editar: <Button>Editar</Button>  },
-  { id: 7, descricao: "Clifford", imovel: "Ferrara", contestacao: "Não", editar: <Button>Editar</Button>  },
-  { id: 8, descricao: "Frances", imovel: "Rossini", contestacao: "Não", editar: <Button>Editar</Button>  },
-  { id: 9, descricao: "Roxie", imovel: "Harvey", contestacao: "Sim", editar: <Button>Editar</Button>  },
+  {
+    id: 1,
+    descricao: "Snow",
+    imovel: "Jon",
+    contestacao: "Sim",
+    editar: <Button>Editar</Button>,
+  },
+  {
+    id: 2,
+    descricao: "Lannister",
+    imovel: "Cersei",
+    contestacao: "Não",
+    editar: <Button>Editar</Button>,
+  },
+  {
+    id: 3,
+    descricao: "Lannister",
+    imovel: "Jaime",
+    contestacao: "Sim",
+    editar: <Button>Editar</Button>,
+  },
+  {
+    id: 4,
+    descricao: "Stark",
+    imovel: "Arya",
+    contestacao: "Não",
+    editar: <Button>Editar</Button>,
+  },
+  {
+    id: 5,
+    descricao: "Targaryen",
+    imovel: "Daenerys",
+    contestacao: "Sim",
+    editar: <Button>Editar</Button>,
+  },
+  {
+    id: 6,
+    descricao: "Melisandre",
+    imovel: null,
+    contestacao: "Sim",
+    editar: <Button>Editar</Button>,
+  },
+  {
+    id: 7,
+    descricao: "Clifford",
+    imovel: "Ferrara",
+    contestacao: "Não",
+    editar: <Button>Editar</Button>,
+  },
+  {
+    id: 8,
+    descricao: "Frances",
+    imovel: "Rossini",
+    contestacao: "Não",
+    editar: <Button>Editar</Button>,
+  },
+  {
+    id: 9,
+    descricao: "Roxie",
+    imovel: "Harvey",
+    contestacao: "Sim",
+    editar: <Button>Editar</Button>,
+  },
 ];
 
-const StyledGridOverlay = styled('div')(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: '100%',
-  '& .ant-empty-img-1': {
-    fill: theme.palette.mode === 'light' ? '#aeb8c2' : '#262626',
+const StyledGridOverlay = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "100%",
+  "& .ant-empty-img-1": {
+    fill: theme.palette.mode === "light" ? "#aeb8c2" : "#262626",
   },
-  '& .ant-empty-img-2': {
-    fill: theme.palette.mode === 'light' ? '#f5f5f7' : '#595959',
+  "& .ant-empty-img-2": {
+    fill: theme.palette.mode === "light" ? "#f5f5f7" : "#595959",
   },
-  '& .ant-empty-img-3': {
-    fill: theme.palette.mode === 'light' ? '#dce0e6' : '#434343',
+  "& .ant-empty-img-3": {
+    fill: theme.palette.mode === "light" ? "#dce0e6" : "#434343",
   },
-  '& .ant-empty-img-4': {
-    fill: theme.palette.mode === 'light' ? '#fff' : '#1c1c1c',
+  "& .ant-empty-img-4": {
+    fill: theme.palette.mode === "light" ? "#fff" : "#1c1c1c",
   },
-  '& .ant-empty-img-5': {
-    fillOpacity: theme.palette.mode === 'light' ? '0.8' : '0.08',
-    fill: theme.palette.mode === 'light' ? '#f5f5f5' : '#fff',
+  "& .ant-empty-img-5": {
+    fillOpacity: theme.palette.mode === "light" ? "0.8" : "0.08",
+    fill: theme.palette.mode === "light" ? "#f5f5f5" : "#fff",
   },
 }));
 
@@ -116,13 +167,145 @@ function CustomNoRowsOverlay() {
   );
 }
 
-const handleSubmit = () => {}
+const handleSubmit = () => {};
 
 export default function DataGridDemo() {
   const [tamanhoPagina, setTamanhoPagina] = useState(5);
   const [openCrudAtendimento, setOpenCrudAtendimento] = useState(false);
   const [scroll, setScroll] = useState("paper");
   const [isLoading, setIsLoading] = useState(false);
+
+  const itemData = [
+    {
+      img: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e",
+      title: "Breakfast",
+    },
+    {
+      img: "https://images.unsplash.com/photo-1551782450-a2132b4ba21d",
+      title: "Burger",
+    },
+    {
+      img: "https://images.unsplash.com/photo-1522770179533-24471fcdba45",
+      title: "Camera",
+    },
+    {
+      img: "https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c",
+      title: "Coffee",
+    },
+    {
+      img: "https://images.unsplash.com/photo-1533827432537-70133748f5c8",
+      title: "Hats",
+    },
+    {
+      img: "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62",
+      title: "Honey",
+    },
+    {
+      img: "https://images.unsplash.com/photo-1516802273409-68526ee1bdd6",
+      title: "Basketball",
+    },
+    {
+      img: "https://images.unsplash.com/photo-1518756131217-31eb79b20e8f",
+      title: "Fern",
+    },
+    {
+      img: "https://images.unsplash.com/photo-1597645587822-e99fa5d45d25",
+      title: "Mushrooms",
+    },
+    {
+      img: "https://images.unsplash.com/photo-1567306301408-9b74779a11af",
+      title: "Tomato basil",
+    },
+    {
+      img: "https://images.unsplash.com/photo-1471357674240-e1a485acb3e1",
+      title: "Sea star",
+    },
+    {
+      img: "https://images.unsplash.com/photo-1589118949245-7d38baf380d6",
+      title: "Bike",
+    },
+  ];
+
+
+  const columns = [
+    {
+      field: "images",
+      headerName: "",
+      renderCell:  (params)=>{
+        return ((
+        <ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
+          {itemData.map((item) => (
+            <ImageListItem key={item.img}>
+              <img
+                src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
+                srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                alt={item.title}
+                loading="lazy"
+              />
+            </ImageListItem>
+          ))}
+        </ImageList>
+      ))},
+    },
+    {
+      field: "id",
+      headerName: "Código",
+    },
+    {
+      field: "descricao",
+      headerName: "Descrição",
+      editable: false,
+    },
+    {
+      field: "imovel",
+      headerName: "Imóvel",
+      editable: false,
+    },
+    {
+      field: "contestacao",
+      headerName: "Contestação",
+      filterable: false,
+    },
+    {
+      field: "editar",
+      headerName: "Editar",
+      filterable: false,
+    },
+    {
+      field: "actions",
+      type: "actions",
+      headerName: "Actions",
+      width: 100,
+      cellClassName: "actions",
+      getActions: ({ id }) => {
+        const isInEditMode = true;
+
+        if (isInEditMode) {
+          return [
+            <GridActionsCellItem
+              icon={<MdModeEditOutline />}
+              label="Save"
+              onClick={() => {
+                handleEdit(10);
+              }}
+            />,
+            <GridActionsCellItem
+              icon={<TiCancel />}
+              label="Cancel"
+              className="textPrimary"
+              // onClick={handleCancelClick(id)}
+              color="inherit"
+            />,
+          ];
+        }
+      },
+    },
+  ];
+
+  const handleEdit = function (num) {
+    setOpenCrudAtendimento(true);
+    alert(num);
+  };
 
   const handleClickOpen = () => () => {
     setOpenCrudAtendimento(true);
@@ -132,7 +315,6 @@ export default function DataGridDemo() {
     setOpenCrudAtendimento(false);
   };
 
-  
   const descriptionElementRef = React.useRef(null);
   React.useEffect(() => {
     if (openCrudAtendimento) {
@@ -143,16 +325,15 @@ export default function DataGridDemo() {
     }
   }, [openCrudAtendimento]);
 
-
   return (
     <>
-     <Backdrop
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1301 }}
-          open={isLoading}
-          >
-            <CircularProgress color="inherit" />
-          {/* <RiLoader4Line/> */}
-          </Backdrop>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1301 }}
+        open={isLoading}
+      >
+        <CircularProgress color="inherit" />
+        {/* <RiLoader4Line/> */}
+      </Backdrop>
       <Navbar />
       {openCrudAtendimento && (
         <div>
@@ -270,39 +451,37 @@ export default function DataGridDemo() {
                         variant="outlined"
                       />
                     </Grid>
-                      <Grid item xs={12} sm={12} md={6} lg={2} xl={2}>
-                        <FormControl
-                          component="fieldset"
-                          sx={{ m: 1, textAlign: "center" }}
-                          fullWidth
-                        >
-                          <FormLabel component="legend">
-                            Usuário Ativo ?{" "}
-                          </FormLabel>
-                          <FormGroup sx={{ alignItems: "center" }}>
-                            <FormControlLabel
-                              control={
-                                <Switch
-                                  checked={true}
-                                  justifyContent="center"
-                                  inputProps={{ "aria-label": "Ativo" }}
-                                  name="ativo"
-                                />
-                              }
-                              label={"Ativo"}
-                            />
-                          </FormGroup>
-                        </FormControl>
-                      </Grid>
-                      <Grid item xs={12} sm={12} md={6} lg={2} xl={2}>
+                    <Grid item xs={12} sm={12} md={6} lg={2} xl={2}>
                       <FormControl
                         component="fieldset"
                         sx={{ m: 1, textAlign: "center" }}
                         fullWidth
                       >
                         <FormLabel component="legend">
-                          Admin ?
+                          Usuário Ativo ?{" "}
                         </FormLabel>
+                        <FormGroup sx={{ alignItems: "center" }}>
+                          <FormControlLabel
+                            control={
+                              <Switch
+                                checked={true}
+                                justifyContent="center"
+                                inputProps={{ "aria-label": "Ativo" }}
+                                name="ativo"
+                              />
+                            }
+                            label={"Ativo"}
+                          />
+                        </FormGroup>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6} lg={2} xl={2}>
+                      <FormControl
+                        component="fieldset"
+                        sx={{ m: 1, textAlign: "center" }}
+                        fullWidth
+                      >
+                        <FormLabel component="legend">Admin ?</FormLabel>
                         <FormGroup sx={{ alignItems: "center" }}>
                           <FormControlLabel
                             control={
@@ -427,7 +606,7 @@ export default function DataGridDemo() {
       )}
 
       <div className="ui-container">
-      <Grid2 container className="ui-linha-superior-grid">
+        <Grid2 container className="ui-linha-superior-grid">
           <Grid2 sm={6} md={8}>
             <Typography variant="h6" gutterBottom component="div">
               Atendimentos
@@ -443,17 +622,20 @@ export default function DataGridDemo() {
             </Button>
           </Grid2>
         </Grid2>
-        
+
         <Box sx={{ height: 400, width: "100%" }} mt={2}>
-          <DataGrid 
-             className="grid-button"
-              components={{ Toolbar: GridToolbar, NoRowsOverlay : CustomNoRowsOverlay }}
-              componentsProps={{
-                toolbar: {
-                  showQuickFilter: true,
-                  quickFilterProps: { debounceMs: 1000, background: "red" },
-                },
-              }}
+          <DataGrid
+            className="grid-button"
+            components={{
+              Toolbar: GridToolbar,
+              NoRowsOverlay: CustomNoRowsOverlay,
+            }}
+            componentsProps={{
+              toolbar: {
+                showQuickFilter: true,
+                quickFilterProps: { debounceMs: 1000, background: "red" },
+              },
+            }}
             rows={rows}
             columns={columns}
             pageSize={tamanhoPagina}
